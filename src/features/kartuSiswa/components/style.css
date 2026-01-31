@@ -1,0 +1,270 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.poppins-extralight {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+/* ::-webkit-scrollbar {
+  display: none;
+} */
+
+.org-tree-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+}
+
+/* Mencegah select teks di seluruh halaman atau elemen tertentu */
+.no-select,
+.no-select * {
+  user-select: none;           /* Standar modern */
+  -webkit-user-select: none;   /* Safari, iOS */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Edge/IE lama */
+
+  /* Opsional: mencegah drag gambar/teks sekaligus */
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Jika ingin seluruh body / app tidak bisa di-select */
+body.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+img {
+  user-select: none;          /* mencegah select teks/gambar */
+  -webkit-user-select: none;  /* Safari & iOS */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* IE/Edge lama */
+
+  user-drag: none;            /* Chrome & modern browsers */
+  -webkit-user-drag: none;    /* Safari */
+  -moz-user-drag: none;       /* Firefox */
+  -o-user-drag: none;
+}
+
+H2 {
+  text-transform: uppercase;
+}
+
+.poppins-light {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+option {
+  color: black;
+}
+
+.poppins-medium {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.poppins-semibold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.poppins-bold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.poppins-extrabold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.poppins-black {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.poppins-thin-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.poppins-extralight-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.poppins-light-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.poppins-regular-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.poppins-medium-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.poppins-semibold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.poppins-bold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.poppins-extrabold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.poppins-black-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+.purple-circle {
+  background-color: purple;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 20rem;
+}
+.progress-bar-container {
+  width: 100%;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  height: 1rem;
+  margin-bottom: 1rem;
+}
+.progress-bar {
+  background: #3b82f6;
+  height: 1rem;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  background-color: #f8f9fa;
+  padding: 30px;
+}
+
+.card {
+  width: 380px;
+  min-height: 500px;
+  background: url('/defaultFrame.png') no-repeat center center;
+  background-size: cover;
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #ff9800, #ffca28);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  margin-top: 20px;
+  background: #ccc;
+  object-fit: cover;
+}
+
+.student-name {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: #333;
+}
+
+.student-nisn {
+  font-size: 18px;
+  color: gray;
+  margin-bottom: 10px;
+}
