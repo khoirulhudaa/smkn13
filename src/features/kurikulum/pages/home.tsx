@@ -113,7 +113,7 @@ const Curriculum = ({ theme, schoolName }: { theme: any; schoolName: string }) =
       <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-indigo-100/50 rounded-full blur-3xl -z-10" />
 
       <div className="max-w-7xl mx-auto px-6">
-        <header className="mb-10 text-center md:text-left">
+        <header className="mb-10 text-left">
           <motion.span 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}

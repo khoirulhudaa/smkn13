@@ -471,7 +471,7 @@ export const NavbarComp = ({ theme = {}, onTenantChange = () => {}, currentKey =
                 </div>
                 <button 
                   onClick={() => setMobileOpen(false)}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 text-white"
+                  className="w-10 h-10 flex items-center font-black border border-white/60 hover:bg-red-700 active:scale-[1] hover:scale-[1.1] duration-200 transition-scale justify-center rounded-full bg-red-600 text-white"
                 >
                   ✕
                 </button>

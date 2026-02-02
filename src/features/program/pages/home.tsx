@@ -49,7 +49,7 @@ const ProgramSekolahPage = () => {
       <NavbarComp theme={theme} />
 
       {/* HERO SECTION */}
-      <HeroComp titleProps="Program Sekolah" id="#program" />
+      <HeroComp titleProps={`Program Sekolah ${new Date().getFullYear()}`} id="#program" />
 
         {/* KONTEN UTAMA */}
       <section id="program" className="py-16 relative overflow-hidden">

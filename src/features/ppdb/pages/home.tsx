@@ -1,49 +1,55 @@
-import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { Loader, Calendar, Mail, Phone, FileText, AlertCircle } from "lucide-react";
+import { HeroComp } from "@/features/_global/components/hero";
 import NavbarComp from "@/features/_global/components/navbar";
 import { getSchoolId } from "@/features/_global/hooks/getSchoolId";
-import { HeroComp } from "@/features/_global/components/hero";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertCircle,
+  FolderSearch,
+  Info,
+  Loader2,
+  Mail,
+  MapPinned // Icon baru untuk Jalur
+  ,
+  Phone,
+  ShieldCheck,
+  Users
+} from "lucide-react";
+import { useEffect, useState } from "react";
+
+const BASE_URL = "http://localhost:5005/ppdb";
+const SCHOOL_ID = getSchoolId();
 
 // ──────────────────────────────────────────────────────────────
-// Konstanta
+// Komponen UI Premium
 // ──────────────────────────────────────────────────────────────
 
-const BASE_URL = "https://be-school.kiraproject.id/ppdb";
-const SCHOOL_ID = getSchoolId(); // Ganti dengan ID sekolah yang sesuai (dari auth/context)
-
-// ──────────────────────────────────────────────────────────────
-// Utilities
-// ──────────────────────────────────────────────────────────────
-
-const cx = (...classes: any[]) => classes.filter(Boolean).join(" ");
-
-// ──────────────────────────────────────────────────────────────
-// Komponen UI Shared
-// ──────────────────────────────────────────────────────────────
-
-const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={cx("rounded-2xl border border-zinc-700/50 bg-zinc-900/40 backdrop-blur-sm p-6", className)}>
+const BentoCard = ({ children, className = "", delay = 0 }: any) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay }}
+    // whileHover={{ y: -5 }}
+    className={`bg-white rounded-[2.5rem] border border-gray-300 shadow-xl shadow-blue-900/5 p-6 md:p-8 relative overflow-hidden group ${className}`}
+  >
     {children}
-  </div>
+  </motion.div>
 );
 
-const InfoItem = ({ icon: Icon, label, value }: { icon: any; label: string; value: string | number | null }) => (
-  <div className="flex items-start gap-4">
-    <div className="p-3 rounded-lg bg-zinc-800/50">
-      <Icon className="h-6 w-6 text-blue-400" />
+const SectionHeader = ({ title, subtitle, icon: Icon }: any) => (
+  <div className="flex flex-col gap-2 mb-8">
+    <div className="flex items-center gap-3 text-blue-700 uppercase tracking-[0.2em] text-xs font-black">
+      <div className="p-2 bg-blue-50 rounded-lg">
+        <Icon size={18} />
+      </div>
+      {subtitle}
     </div>
-    <div>
-      <p className="text-sm text-zinc-400">{label}</p>
-      <p className="text-lg font-medium text-white mt-1">
-        {value ?? "—"}
-      </p>
-    </div>
+    <h3 className="text-2xl md:text-3xl font-[900] text-slate-900 tracking-tight">{title}</h3>
   </div>
 );
 
 // ──────────────────────────────────────────────────────────────
-// Main Component
+// Main Page
 // ──────────────────────────────────────────────────────────────
 
 export default function PPDBPage() {
@@ -55,164 +61,189 @@ export default function PPDBPage() {
     const fetchPPDBConfig = async () => {
       try {
         setLoading(true);
+        // Menambahkan cache: "no-store" untuk mencegah Too Many Requests dari sisi caching browser yang agresif
         const res = await fetch(`${BASE_URL}?schoolId=${SCHOOL_ID}`, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // Jika ada autentikasi: Authorization: `Bearer ${token}`
-          },
+          headers: { "Content-Type": "application/json" },
           cache: "no-store",
         });
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}: ${await res.text()}`);
-        }
-
+        if (!res.ok) throw new Error(`Gagal memuat data (HTTP ${res.status})`);
         const json = await res.json();
 
-        if (json.success && json.data && json.data.length > 0) {
-          setConfig(json.data[0]); // ambil yang terbaru / pertama
+        if (json.success && json.data?.length > 0) {
+          setConfig(json.data[0]);
         } else {
           setConfig(null);
         }
       } catch (err: any) {
         setError(err.message || "Gagal memuat informasi PPDB");
-        setConfig(null);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchPPDBConfig();
+    if (SCHOOL_ID) fetchPPDBConfig();
   }, []);
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "—";
     return new Date(dateStr).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
+      day: "numeric", month: "long", year: "numeric",
     });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-zinc-950">
-        <div className="flex flex-col items-center gap-4">
-          <Loader className="h-12 w-12 animate-spin text-blue-500" />
-          <p className="text-zinc-400">Memuat informasi PPDB...</p>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8faff]">
+        <Loader2 className="h-12 w-12 animate-spin text-blue-700 mb-4" />
+        <p className="text-blue-900/50 font-bold tracking-widest uppercase text-xs">Menyiapkan Informasi...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen bg-[#f8faff] text-slate-900 font-sans">
       <NavbarComp />
-      {/* Hero */}
-      <HeroComp titleProps={`PPDB Tahun ${new Date().getFullYear() || '2026'}`} id="#ppdb" />
+      <HeroComp titleProps={`Portal PPDB ${config?.year || ''}`} id="#ppdb" />
 
-      {/* Main Content */}
-      <section id="ppdb" className="py-16">
-        <div className="max-w-7xl mx-auto md:px-0 px-4">
-          {error ? (
-            <Card className="text-center py-12">
-              <AlertCircle className="h-16 w-16 mx-auto text-red-500 mb-4" />
-              <h2 className="text-2xl font-bold text-red-400 mb-3">Terjadi Kesalahan</h2>
-              <p className="text-zinc-400">{error}</p>
-            </Card>
-          ) : !config ? (
-            <Card className="text-center py-16">
-              <FileText className="h-20 w-20 mx-auto text-zinc-600 mb-6" />
-              <h2 className="text-3xl font-bold mb-4">Belum Ada Konfigurasi PPDB</h2>
-              <p className="text-zinc-400 text-lg max-w-xl mx-auto">
-                Informasi PPDB untuk tahun ajaran ini belum dikonfigurasi oleh pihak sekolah.
-                Silakan hubungi admin sekolah untuk informasi lebih lanjut.
-              </p>
-            </Card>
-          ) : (
-            <>
-              <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                  PPDB Tahun {config.year}
-                </h1>
-                <p className="text-xl text-zinc-400">
-                  {config.startDate && config.endDate
-                    ? `${formatDate(config.startDate)} – ${formatDate(config.endDate)}`
-                    : "Periode belum ditentukan"}
+      <section id="ppdb" className="py-16 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-[120px] -z-10" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-100/30 rounded-full blur-[100px] -z-10" />
+
+        <div className="max-w-7xl mx-auto px-4">
+          <AnimatePresence mode="wait">
+            {error ? (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                className="bg-white border-2 border-red-50 p-16 rounded-[3rem] text-center shadow-2xl shadow-red-500/10"
+              >
+                <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-6" />
+                <h2 className="text-3xl font-black text-slate-900 mb-2">Terjadi Gangguan</h2>
+                <p className="text-slate-500">{error}</p>
+              </motion.div>
+            ) : !config ? (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                className="bg-white border border-blue-100 p-20 rounded-[4rem] text-center shadow-2xl shadow-blue-900/5"
+              >
+                <FolderSearch className="h-12 w-12 text-blue-700 mx-auto mb-8 animate-bounce" />
+                <h2 className="text-4xl font-[900] text-slate-900 mb-4 tracking-tight">Belum Ada Informasi</h2>
+                <p className="text-slate-500 text-lg max-w-xl mx-auto leading-relaxed">
+                  Pendaftaran untuk tahun ajaran baru belum dibuka.
                 </p>
-              </div>
+              </motion.div>
+            ) : (
+              <div className="space-y-8">
+                
+                {/* ─── Row 1: Header & Quota ─── */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                  <BentoCard className="md:col-span-10 flex flex-col justify-center">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                      <div>
+                        <div className="flex items-center gap-2 text-blue-700 font-black text-xs uppercase tracking-widest mb-3">
+                          <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+                          Pendaftaran Aktif
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-[900] text-slate-900 tracking-tighter">
+                          PPDB - <span className="text-blue-700">{config.year}</span>
+                        </h1>
+                      </div>
+                      <div className="bg-blue-50 border border-blue-900/10 p-6 rounded-[2rem]">
+                        <p className="text-blue-900/40 font-bold text-[10px] uppercase tracking-widest mb-1">Periode</p>
+                        <p className="text-blue-700 font-black text-sm md:text-base">
+                          {formatDate(config.startDate)} — {formatDate(config.endDate)}
+                        </p>
+                      </div>
+                    </div>
+                  </BentoCard>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card>
-                  <InfoItem
-                    icon={Calendar}
-                    label="Periode Pendaftaran"
-                    value={
-                      config.startDate && config.endDate
-                        ? `${formatDate(config.startDate)} s/d ${formatDate(config.endDate)}`
-                        : "Belum ditentukan"
-                    }
-                  />
-                </Card>
+                  <BentoCard className="md:col-span-2 bg-blue-600 text-slate-900">
+                    <div className="relative z-10 flex flex-col h-full justify-between">
+                      <p className="text-slate-900 font-bold uppercase tracking-widest text-xs">Total Kuota</p>
+                      <div>
+                        <h4 className="text-6xl font-black text-slate-900">{config.quota || "∞"}</h4>
+                      </div>
+                    </div>
+                  </BentoCard>
+                </div>
 
-                <Card>
-                  <InfoItem
-                    icon={FileText}
-                    label="Kuota Siswa"
-                    value={config.quota ? `${config.quota} siswa` : "Tidak dibatasi"}
-                  />
-                </Card>
-
-                <Card>
-                  <InfoItem
-                    icon={Mail}
-                    label="Email Kontak"
-                    value={config.contactEmail}
-                  />
-                </Card>
-
-                <Card className="md:col-span-2 lg:col-span-3">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-3">
-                    <FileText className="h-6 w-6 text-blue-400" />
-                    Deskripsi PPDB
-                  </h3>
-                  <p className="text-zinc-300 whitespace-pre-line leading-relaxed">
-                    {config.description || "Belum ada deskripsi"}
-                  </p>
-                </Card>
-
-                <Card className="md:col-span-2 lg:col-span-3">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-3">
-                    <FileText className="h-6 w-6 text-blue-400" />
-                    Persyaratan Pendaftaran
-                  </h3>
-                  {config.requirements?.length > 0 ? (
-                    <ul className="list-disc list-inside space-y-3 text-zinc-300">
-                      {config.requirements.map((req: string, i: number) => (
-                        <li key={i} className="pl-2">
-                          {req}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-zinc-500 italic">Belum ada persyaratan yang ditambahkan</p>
-                  )}
-                </Card>
-
-                <Card className="md:col-span-2 lg:col-span-3">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-3">
-                    <Phone className="h-6 w-6 text-blue-400" />
-                    Kontak Resmi
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <InfoItem icon={Mail} label="Email" value={config.contactEmail} />
-                    <InfoItem icon={Phone} label="Telepon / WA" value={config.contactPhone} />
+                {/* ─── Row 2: Jalur Pendaftaran (NEW SECTION) ─── */}
+                <BentoCard className="border-blue-100">
+                  <SectionHeader title="Jalur Pendaftaran" subtitle="Admission Paths" icon={MapPinned} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {config.admissionPaths && config.admissionPaths.length > 0 ? (
+                      config.admissionPaths.map((path: any, i: number) => (
+                        <motion.div 
+                          key={i}
+                          whileHover={{ scale: 1.02 }}
+                          className="p-6 rounded-[2rem] bg-slate-50 border border-slate-300 flex flex-col h-full"
+                        >
+                          <div className="flex justify-between items-start mb-4">
+                            <h5 className="text-lg font-black text-slate-900">{path.name}</h5>
+                            <span className="bg-blue-100 text-blue-700 text-[14px] px-3 py-1 rounded-full font-black uppercase">
+                              {path.quota}
+                            </span>
+                          </div>
+                          <p className="text-slate-500 text-sm leading-loose">
+                            {path.description || "Tidak ada deskripsi spesifik untuk jalur ini."}
+                          </p>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <p className="col-span-full text-center text-slate-400 italic py-4">Informasi jalur pendaftaran belum tersedia.</p>
+                    )}
                   </div>
-                </Card>
+                </BentoCard>
+
+                {/* ─── Row 3: Description & Contacts ─── */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                  <BentoCard className="md:col-span-8">
+                    <SectionHeader title="Deskripsi Kegiatan" subtitle="Information" icon={Info} />
+                    <p className="text-slate-600 leading-loose text-md whitespace-pre-line">
+                      {config.description || "Belum ada deskripsi mendalam mengenai pendaftaran tahun ini."}
+                    </p>
+                  </BentoCard>
+
+                  <div className="md:col-span-4 flex flex-col gap-6">
+                    <BentoCard className="bg-slate-900 text-slate-900 h-full">
+                      <Phone className="text-blue-500 mb-6" size={32} />
+                      <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest mb-1">Hubungi Kami</p>
+                      <h4 className="text-xl font-bold text-slate-900">{config.contactPhone || "—"}</h4>
+                    </BentoCard>
+
+                    <BentoCard className="h-full border-blue-100">
+                      <Mail className="text-blue-600 mb-6" size={32} />
+                      <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">Official Email</p>
+                      <h4 className="text-xl font-bold text-slate-900 truncate">{config.contactEmail || "—"}</h4>
+                    </BentoCard>
+                  </div>
+                </div>
+
+                {/* ─── Row 4: Requirements ─── */}
+                <BentoCard className="bg-white border-blue-100">
+                  <div className="flex flex-col md:flex-row gap-12">
+                    <div className="md:w-1/3">
+                      <SectionHeader title="Syarat & Ketentuan" subtitle="Requirement" icon={ShieldCheck} />
+                      <p className="text-slate-500 text-sm leading-relaxed">
+                        Siapkan dokumen asli untuk proses verifikasi data setelah melakukan pendaftaran online.
+                      </p>
+                    </div>
+                    <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {config.requirements?.map((req: string, i: number) => (
+                        <div key={i} className="group flex items-center gap-4 p-5 rounded-2xl bg-blue-50/50 border border-blue-900/10 transition-all group">
+                          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-black text-xs shadow-sm">
+                            {i + 1}
+                          </div>
+                          <span className="font-bold text-sm text-slate-900 leading-tight">{req}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </BentoCard>
+
               </div>
-            </>
-          )}
+            )}
+          </AnimatePresence>
         </div>
       </section>
     </div>

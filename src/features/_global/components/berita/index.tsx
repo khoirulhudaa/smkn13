@@ -43,7 +43,7 @@ const BeritaComp = () => {
   }, [q, cat, newsData]);
 
   return (
-    <section className="py-12 md:py-24 bg-slate-50 relative overflow-hidden">
+    <section className="py-12 md:py-24 bg-slate-50 relative">
       {/* Ornamen Background */}
       <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/circuit-board.png')]" />
       
@@ -62,7 +62,7 @@ const BeritaComp = () => {
             </h2>
           </div>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 z-[4]">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input
@@ -74,7 +74,7 @@ const BeritaComp = () => {
             </div>
             <select 
               onChange={(e) => setCat(e.target.value)}
-              className="px-6 py-4 rounded-2xl bg-white border border-gray-300 text-black font-bold text-slate-700 outline-none cursor-pointer shadow-sm"
+              className="px-6 py-4 rounded-2xl bg-white border border-gray-300 font-bold text-slate-700 outline-none cursor-pointer shadow-sm"
             >
               {categories.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -167,7 +167,7 @@ const BeritaComp = () => {
               <div className="md:w-3/5 p-8 md:p-16 overflow-y-auto">
                 <button 
                   onClick={() => setSelected(null)}
-                  className="absolute top-8 right-8 w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-all border border-slate-200"
+                  className="absolute top-8 right-8 w-12 h-12 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 text-white transition-all"
                 >
                   <X size={24} />
                 </button>

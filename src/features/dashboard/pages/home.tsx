@@ -4,6 +4,7 @@ import BeritaComp from "@/features/_global/components/berita";
 import { FooterComp } from "@/features/_global/components/footer";
 import GalleryComp from "@/features/_global/components/galeri";
 import { HeroComp } from "@/features/_global/components/hero";
+import { HeroComp78101 } from "@/features/_global/components/hero/hero78101";
 import NavbarComp from "@/features/_global/components/navbar";
 import { getSchoolId } from "@/features/_global/hooks/getSchoolId";
 import { queryClient } from "@/features/_root/queryClient";
@@ -189,7 +190,7 @@ const SambutanSection = () => {
   ];
 
   return (
-   <section id="sambutan" className="relative pt-20 pb-6 md:pb-12 bg-white z-[2]">
+   <section id="sambutan" className="relative pt-20 pb-6 md:pb-6 bg-white z-[2]">
    
       {/* Ornamen Background Halus */}
       {/* 1. Grid Pattern & Gradient Top */}
@@ -398,7 +399,7 @@ const FasilitasSection = () => {
   }
 
   return (
-    <section className="py-12 md:py-24 bg-slate-50">
+    <section className="py-12 md:py-16 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeader 
           title="Fasilitas Kampus" 
@@ -499,9 +500,9 @@ const PengurusSection = () => {
   }
 
   return (
-    <section className="py-12 md:py-24 bg-white relative">
+    <section className="py-12 md:py-24 bg-slate-50 relative">
       {/* Background Decor */}
-      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-slate-50 to-transparent" />
+      {/* <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-slate-50 to-transparent" /> */}
 
       <div className="max-w-7xl mx-auto px-6 relative z-[4]">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-6">
@@ -1306,9 +1307,9 @@ const FAQSection = () => {
 };
 
 // Page utama
-const Page = ({ theme, onTenantChange, currentKey }: any) => (
+const Page = ({ theme, onTenantChange, currentKey, schoolID }: any) => (
   <div className="min-h-screen bg-white">
-    <motion.div 
+    {/* <motion.div 
       animate={{ 
         x: [0, 50, 0], 
         y: [0, 30, 0],
@@ -1325,9 +1326,9 @@ const Page = ({ theme, onTenantChange, currentKey }: any) => (
       }}
       transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
       className="fixed z-[3] bottom-0 -right-20 w-[30%] h-[40%] bg-blue-800 rounded-full blur-[160px]" 
-    />
+    /> */}
     <NavbarComp theme={theme} onTenantChange={onTenantChange} currentKey={currentKey} />
-    <HeroComp />
+    <HeroComp id="#sambutan" />
     {/* <StatsBar theme={theme} /> */}
     <SambutanSection />
     <FasilitasSection />
@@ -1347,12 +1348,13 @@ const Homepage = () => {
   const schoolInfo = SMAN25_CONFIG;
   const [key, setKey] = useState(schoolInfo.fullName);
   const theme = schoolInfo.theme;
+  const schoolID = getSchoolId()
 
   useEffect(() => {
     queryClient.invalidateQueries();
   }, [key]);
 
-  return <Page theme={theme} onTenantChange={setKey} currentKey={key} />;
+  return <Page theme={theme} onTenantChange={setKey} currentKey={key} schoolID={schoolID} />;
 };
 
 export default Homepage;

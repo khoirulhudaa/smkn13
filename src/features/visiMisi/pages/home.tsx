@@ -4,292 +4,196 @@ import { HeroComp } from "@/features/_global/components/hero";
 import NavbarComp from "@/features/_global/components/navbar";
 import { getSchoolId } from "@/features/_global/hooks/getSchoolId";
 import { motion } from "framer-motion";
-import React, { useState, useEffect } from "react";
+import { BarChart3, CheckCircle2, Lightbulb, Loader2, Quote, Rocket, Target } from "lucide-react";
+import { useEffect, useState } from "react";
 
-// Asumsi schoolId dari config atau hardcode (ganti dengan nilai real dari DB/config/hook)
-const SCHOOL_ID = getSchoolId(); // <-- GANTI DENGAN SCHOOL ID REAL ANDA
-
+const SCHOOL_ID = getSchoolId();
 const BASE_URL = "https://be-school.kiraproject.id/visi-misi";
 
-/*********
- * BADGE
- *********/
-const Badge = ({ children }: { children: React.ReactNode }) => (
-  <span className="flex items-center px-3 py-1.5 text-xs rounded-full bg-blue-100 text-blue-800 border border-blue-200 font-medium shadow-sm">
-    {children}
-  </span>
-);
+// ──────────────────────────────────────────────────────────────
+// Sub-Components
+// ──────────────────────────────────────────────────────────────
 
-/****************
- * SECTION WRAPPER
- ****************/
-const Section = ({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) => (
-  <section className="py-12 md:py-16 bg-white">
-    <div className="max-w-7xl mx-auto px-4 md:px-6">
-      <div className="mb-10">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{title}</h2>
-        {subtitle && <p className="mt-3 text-lg text-gray-600">{subtitle}</p>}
-      </div>
+const SectionContainer = ({ children, className = "" }: any) => (
+  <section className={`py-16 border-b border-gray-100 last:border-0 ${className}`}>
+    <div className="max-w-7xl mx-auto px-5 md:px-4">
       {children}
     </div>
   </section>
 );
 
-/****************
- * VisiMisi COMPONENT (dengan fetch biasa)
- ****************/
-const VisiMisi = ({ schoolName }: { schoolName: string }) => {
-  const [data, setData] = useState<{
-    vision: string;
-    missions: string[];
-    pillars: string[];
-    kpis: { target: number; indicator: string }[];
-  } | null>(null);
+const PremiumLabel = ({ children, icon: Icon }: any) => (
+  <div className="flex items-center gap-3 text-blue-600 font-black text-xs uppercase tracking-[0.3em] mb-8">
+    <div className="p-2.5 bg-blue-50 rounded-xl border border-blue-100">
+      <Icon size={18} />
+    </div>
+    {children}
+  </div>
+);
+
+// ──────────────────────────────────────────────────────────────
+// Main Page Component
+// ──────────────────────────────────────────────────────────────
+
+export default function VisiMisiPage() {
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const schoolInfo = SMAN25_CONFIG;
 
   useEffect(() => {
-    const fetchVisiMisi = async () => {
-      if (!SCHOOL_ID) {
-        setError("School ID tidak ditemukan");
-        setLoading(false);
-        return;
-      }
-
+    const fetchData = async () => {
+      if (!SCHOOL_ID) return;
       try {
-        const res = await fetch(`${BASE_URL}?schoolId=${SCHOOL_ID}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          cache: "no-store",
-        });
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
+        setLoading(true);
+        const res = await fetch(`${BASE_URL}?schoolId=${SCHOOL_ID}`, { cache: "no-store" });
         const json = await res.json();
-        const records = json.success ? json.data : json; // Sesuaikan jika response wrapped
-
-        let record;
-        if (Array.isArray(records) && records.length > 0) {
-          record = records[0];
-        } else if (typeof records === "object" && records !== null) {
-          record = records;
-        }
-
-        if (record) {
-          setData({
-            vision: record.vision || record.visi || "",
-            missions: Array.isArray(record.missions) ? record.missions : [],
-            pillars: Array.isArray(record.pillars) ? record.pillars : [],
-            kpis: Array.isArray(record.kpis)
-              ? record.kpis.map((item: any) => ({
-                  target: Number(item.target) || 0,
-                  indicator: String(item.indicator || item.name || ""),
-                }))
-              : [],
-          });
-        } else {
-          setData(null);
-        }
-      } catch (err: any) {
-        console.error("Fetch error:", err);
-        setError("Gagal memuat data visi misi dari server");
+        const record = json.success ? (Array.isArray(json.data) ? json.data[0] : json.data) : null;
+        setData(record);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchVisiMisi();
+    fetchData();
   }, []);
-
-  const visi = data?.vision || "";
-  const misi = data?.missions || [];
-  const pillars = data?.pillars || [];
-  const kpis = data?.kpis || [];
 
   if (loading) {
     return (
-      <div className="text-center py-20 text-gray-500">Memuat visi & misi...</div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-12 text-red-600">{error}. Menampilkan data default.</div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FDFDFF]">
+        <Loader2 className="h-10 w-10 animate-spin text-blue-600 mb-4" />
+        <p className="text-slate-400 font-black text-[10px] tracking-widest uppercase">Memuat Strategi...</p>
+      </div>
     );
   }
 
   return (
-    <div id="visi-misi" className="relative bg-gray-50 pb-8">
-      {/* Visi */}
-      <Section title="Visi" subtitle={`Arah besar pengembangan ${schoolName}`}>
-        <motion.blockquote
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className={`text-2xl border border-gray-400 md:text-xl font-normal ${visi ? 'text-black' : 'text-gray-400'} rounded-3xl p-10 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-xlleading-relaxed`}
-        >
-          {visi || "Data visi belum tersedia"}
-        </motion.blockquote>
-      </Section>
-
-      {/* Misi */}
-      {misi.length > 0 ? (
-        <Section title="Misi" subtitle="Langkah strategis untuk mewujudkan visi">
-          <div className="grid md:grid-cols-2 gap-6">
-            {misi.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="rounded-2xl  p-7 bg-white border border-gray-400 shadow-md hover:shadow-xl transition-shadow flex items-start gap-5"
-              >
-                <Badge>M{i + 1}</Badge>
-                <p className="text-base leading-relaxed text-gray-800">{item}</p>
-              </motion.div>
-            ))}
-          </div>
-        </Section>
-      ): (
-        <Section title="Misi" subtitle={`Arah besar pengembangan ${schoolName}`}>
-          <motion.blockquote
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-2xl md:text-xl font-normal text-gray-400 rounded-3xl p-10 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-xlleading-relaxed"
-          >
-            {"Data misi belum tersedia"}
-          </motion.blockquote>
-        </Section>
-      )}
-
-      {/* Pilar */}
-      {pillars.length > 0 ? (
-        <Section title="Pilar" subtitle="Langkah strategis untuk mewujudkan visi">
-          <div className="grid md:grid-cols-2 gap-6">
-            {pillars.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="rounded-2xl p-7 bg-white border border-gray-400 shadow-md hover:shadow-xl transition-shadow flex items-start gap-5"
-              >
-                <Badge>M{i + 1}</Badge>
-                <p className="text-base leading-relaxed text-gray-800">{item}</p>
-              </motion.div>
-            ))}
-          </div>
-        </Section>
-      ): (
-        <Section title="Pilar" subtitle={`Arah besar pengembangan ${schoolName}`}>
-          <motion.blockquote
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-2xl md:text-xl font-normal text-gray-400 rounded-3xl p-10 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-xlleading-relaxed"
-          >
-            {"Data pilar belum tersedia"}
-          </motion.blockquote>
-        </Section>
-      )}
-
-      {/* KPI */}
-      {kpis.length > 0 ? (
-        <Section title="KPI" subtitle="Indikator Kinerja Utama & Target Pencapaian">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {kpis.map((kpi, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="rounded-2xl p-6 bg-white border border-gray-400 shadow-md hover:shadow-xl transition-all flex flex-col gap-4 hover:-translate-y-1"
-              >
-                <div className="flex items-center justify-between">
-                  <Badge>KPI {i + 1}</Badge>
-                  <span className="text-xl font-bold text-blue-700">
-                    {kpi.target}%
-                  </span>
-                </div>
-
-                <p className="text-base leading-relaxed text-gray-800 font-medium">
-                  {kpi.indicator}
-                </p>
-
-                {/* Optional: progress bar sederhana */}
-                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                  <div
-                    className="bg-blue-600 h-2.5 rounded-full transition-all"
-                    style={{ width: `${Math.min(kpi.target, 100)}%` }}
-                  ></div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </Section>
-      ) : (
-        <Section title="KPI" subtitle={`Arah besar pengembangan ${schoolName}`}>
-          <motion.blockquote
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-2xl md:text-xl font-normal text-gray-400 rounded-3xl p-10 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-xl leading-relaxed"
-          >
-            {"Data KPI belum tersedia"}
-          </motion.blockquote>
-        </Section>
-      )}
-    </div>
-  );
-};
-
-/********
- * PAGE UTAMA
- ********/
-const VisiMisiPage = () => {
-  const schoolInfo = SMAN25_CONFIG;
-  const schoolName = schoolInfo.fullName;
-
-  // Untuk demo fallback di hero, kita bisa fetch lagi atau pakai state global jika ada
-  // Di sini pakai fetch sederhana lagi (atau lift state ke atas jika mau optimize)
-  const [heroVisi, setHeroVisi] = useState<string>("");
-
-  useEffect(() => {
-    fetch(`${BASE_URL}?schoolId=${SCHOOL_ID}`)
-      .then((res) => res.json())
-      .then((json) => {
-        const records = json.success ? json.data : json;
-        const record = Array.isArray(records) && records.length > 0 ? records[0] : records;
-        setHeroVisi(record?.vision || record?.visi || "");
-      })
-      .catch(() => {});
-  }, []);
-
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-blue-100">
       <NavbarComp theme={schoolInfo.theme} />
+      <HeroComp titleProps="Visi - Misi & Tujuan" id="#content" />
 
-      {/* Hero dengan visi dinamis */}
-      <HeroComp titleProps="Visi & Misi Sekolah" id="#visi" />
+      <main id="content" className="relative">
+        {/* 1. VISI SECTION - Rata Kiri dengan Border Aksen */}
+        <SectionContainer className="bg-white">
+          <div className="relative max-w-7xl">
+            <Quote className="absolute top-4 text-slate-300 right-0 md:flex hidden rotate-12" size={200} />
+            <PremiumLabel icon={Target}>Visi Sekolah</PremiumLabel>
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative pl-4 w-full md:w-[80%] md:pl-12 border-l-4 border-blue-600"
+            >
+              <h2 className="text-3xl md:text-5xl font-black tracking-tighter leading-[1.1] text-slate-900">
+                {data?.vision || "Cita-cita sekolah belum dikonfigurasi."}
+              </h2>
+            </motion.div>
+          </div>
+        </SectionContainer>
 
-      {/* Content */}
-      <main className="flex-1 relative z-[1]" id="visi">
-        <VisiMisi schoolName={schoolName} />
+        {/* 2. MISI SECTION - Vertical Stack Rata Kiri */}
+        <SectionContainer className="bg-slate-50">
+          <PremiumLabel icon={Rocket}>Langkah Strategis (Misi)</PremiumLabel>
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-5">
+            {data?.missions?.map((misi: string, i: number) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="w-full gap-4 md:gap-12 p-8 md:p-10 bg-white border border-slate-300 rounded-[2rem] hover:shadow-2xl hover:shadow-blue-900/5 transition-all group"
+              >
+                <div className="text-2xl w-[80%] md:w-max md:text-4xl font-black text-blue-600/20 group-hover:text-blue-600 transition-colors shrink-0">
+                  {(i + 1).toString().padStart(2, '0')}
+                </div>
+                <div className="flex-1">
+                  <p className="text-md md:text-lg font-semibold md:font-bold text-slate-800 leading-relaxed italic">
+                    {misi}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </SectionContainer>
+
+        {/* 3. PILAR SECTION - Minimalis Rata Kiri */}
+        <SectionContainer>
+          <div className="max-w-7xl pb-7 md:pb-12">
+            <PremiumLabel icon={Lightbulb}>Tujuan Utama</PremiumLabel>
+            <h3 className="text-2xl w-[80%] md:w-max md:text-4xl font-black tracking-tight mb-12">Fondasi Pengembangan Pendidikan</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data?.pillars?.map((pilar: string, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex items-center gap-6 p-6 md:p-8 rounded-3xl bg-white border border-slate-300 hover:border-blue-300 transition-colors"
+                >
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="text-blue-600" size={24} />
+                  </div>
+                  <span className="text-md md:text-lg font-semibold md:font-bold text-slate-800 italic tracking-tight">{pilar}</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </SectionContainer>
+
+        {/* 4. KPI SECTION - Premium Rata Kiri */}
+        <SectionContainer className="bg-slate-900 text-white overflow-hidden relative">
+          {/* Ornamen dekorasi */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 blur-[100px] -z-0" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 text-blue-400 font-black text-xs uppercase tracking-[0.3em] mb-12">
+              <BarChart3 size={20} />
+              Indikator Kinerja (KPI)
+            </div>
+            
+            <div className="grid grid-cols-1 gap-12">
+              {data?.kpis?.map((kpi: any, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="max-w-7xl group"
+                >
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
+                    <div className="space-y-2">
+                      <span className="text-blue-500 font-black text-xs tracking-widest uppercase">Target {i + 1}</span>
+                      <h4 className="text-2xl md:text-3xl font-bold leading-tight text-white transition-colors">
+                        {kpi.indicator}
+                      </h4>
+                    </div>
+                    <div className="shrink-0">
+                      <span className="text-6xl font-black tracking-tighter text-white">
+                        {kpi.target}<span className="text-2xl text-white ml-2"> %</span>
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Linear Progress Bar Rata Kiri */}
+                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${kpi.target}%` }}
+                      transition={{ duration: 1.5, ease: "circOut" }}
+                      className="h-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </SectionContainer>
       </main>
 
       <FooterComp />
     </div>
   );
-};
-
-export default VisiMisiPage;
+}

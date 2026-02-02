@@ -46,11 +46,11 @@ const HeroSejarah: React.FC<{ theme: any; data: any }> = ({ theme, data }) => {
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl" />
       
       <div className="max-w-7xl mx-auto px-6">
-        <div className="gap-12 flex flex-col justify-center items-center text-clip items-center">
+        <div className="gap-12 flex flex-col justify-center items-center text-clip">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            className="w-full text-center"
+            className="w-full text-left"
           >
             <span className="text-blue-600 font-bold tracking-widest uppercase text-sm">Legacy</span>
             <h2 className="text-3xl italic md:text-4xl font-extrabold mt-2 mb-6" style={{ color: theme.primaryText }}>
@@ -95,9 +95,9 @@ const Timeline: React.FC<{ theme: any; data: any[] }> = ({ theme, data }) => {
   return (
     <section className="pt-16 pb-4 bg-slate-50/50">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="text-left mb-16">
           <h2 className="text-3xl md:text-4xl font-bold italic" style={{ color: theme.primaryText }}>Jejak Langkah</h2>
-          <div className="h-1 w-20 bg-blue-600 mx-auto mt-4 rounded-full" />
+          <div className="h-1 w-20 bg-blue-600 mt-4 rounded-full" />
         </div>
 
         <div className="relative">
@@ -110,7 +110,7 @@ const Timeline: React.FC<{ theme: any; data: any[] }> = ({ theme, data }) => {
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                className={`relative flex border border-gray-400 rounded-3xl items-center justify-between w-full ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
+                className={`relative flex border border-blue-300 rounded-3xl items-center justify-between w-full ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
               >
                 <div className="hidden md:block w-5/12" />
                 
@@ -139,7 +139,7 @@ const KepalaSekolahGrid: React.FC<{ theme: any; data: any[] }> = ({ theme, data 
   return (
     <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 italic text-center" style={{ color: theme.primaryText }}>
+        <h2 className="text-3xl md:text-4xl font-bold mb-12 italic text-left" style={{ color: theme.primaryText }}>
           Pimpinan dari <span className="text-blue-700">Masa ke Masa</span>
         </h2>
         
@@ -148,7 +148,7 @@ const KepalaSekolahGrid: React.FC<{ theme: any; data: any[] }> = ({ theme, data 
             <motion.div 
               key={i}
               whileHover={{ y: -10 }}
-              className="md:w-[31%] w-full relative group p-6 rounded-[2.5rem] bg-white border border-gray-300 shadow-xl shadow-slate-200/50 text-center"
+              className="md:w-[31%] w-full relative group p-6 rounded-[2.5rem] bg-white border border-gray-300 shadow-xl shadow-slate-200/50 text-left"
             >
               <div className="relative w-32 h-32 mx-auto mb-6">
                 <div className="absolute inset-0 bg-blue-600 rounded-full scale-105 opacity-20 group-hover:scale-110 transition-transform" />
@@ -221,7 +221,7 @@ const SejarahPage = () => {
           <KepalaSekolahGrid theme={theme} data={data?.daftarKepalaSekolah} />
         </>
       ) : (
-        <div className="py-20 text-center opacity-50">Memuat data sejarah...</div>
+        <div className="py-20 text-left opacity-50">Memuat data sejarah...</div>
       )}
       
       <FooterComp />
