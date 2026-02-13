@@ -1,4 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { getSchoolId } from "../../hooks/getSchoolId";
 
 interface HeroProps {
   id?: string;
@@ -6,21 +8,45 @@ interface HeroProps {
   subTitleProps?: string;
 }
 
+// Hook baru untuk profil sekolah (hanya ini yang ditambah)
+const useSchoolProfile = () => {
+  const schoolId = getSchoolId(); // ← sesuaikan dengan ID sekolah yang ada di database
+
+  const API_BASE = 'https://be-school.kiraproject.id';
+
+  return useQuery({
+    queryKey: ['schoolProfile', schoolId],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/profileSekolah?schoolId=${schoolId}`, {
+        cache: 'no-store',
+      });
+      if (!res.ok) throw new Error(`Gagal mengambil profil sekolah: ${res.status}`);
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || "Response tidak valid");
+      return data.data; // null atau objek profil
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+  });
+};
+
 export const HeroComp101 = ({ id, titleProps, subTitleProps }: HeroProps) => {
+  const { data: profile } = useSchoolProfile();
+
   return (
-    <section className="relative h-[90vh] border-b border-slate-900/20 rounded-br-[120px] rounded-bl-[120px] flex items-center bg-blue-800/10 overflow-hidden ">
+    <section className="relative h-max md:pt-0 pt-10 md:h-[90vh] border-b border-slate-900/20 rounded-br-[120px] rounded-bl-[120px] flex items-center bg-blue-800/10 overflow-hidden ">
       {/* Background Decorative Elements */}
       {/* <div className="absolute top-0 right-0 w-1/3 h-full bg-white -skew-x-12 transform origin-top" /> */}
       
       <div className="container mx-auto px-4 relative z-[4]">
-        <div className="flex gap-16 items-center">
+        <div className="md:flex gap-16 items-center">
           
           {/* Kolom Kiri: Teks */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="w-[60%] mt-[-20px]"
+            className="w-full md:w-[60%] md:mt-[-20px] md:space-y-7 space-y-7"
           >
             <div className="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-100 border border-blue-200">
               <span className="text-sm font-bold text-blue-700 uppercase tracking-widest">
@@ -28,23 +54,29 @@ export const HeroComp101 = ({ id, titleProps, subTitleProps }: HeroProps) => {
               </span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl w-full font-black text-slate-900 leading-tight mb-6">
+            <h1 className="text-4xl lg:text-7xl w-full font-black text-slate-900 leading-tight mb-6">
               {titleProps ? titleProps : "SMAN 101 Jakarta Barat"}
             </h1>
 
-            <p className="text-lg text-slate-600 ml-[2px] leading-relaxed mb-10 max-w-full">
+            <p className="text-md md:text-lg text-slate-600 ml-[2px] leading-relaxed mb-10 max-w-full">
               {subTitleProps ? subTitleProps : "Kami menggabungkan kurikulum standar global dengan pembentukan karakter yang kuat untuk melahirkan pemimpin masa depan yang inovatif."}
             </p>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="w-max grid grid-cols-2 gap-1 mt-12">
             <a href={id}>
-                <button className="px-8 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-blue-600 transition-all shadow-lg shadow-slate-200">
-                    Mulai Eksplorasi
-                </button>
+              <button className="w-full md:w-max md:px-4 px-8 py-4 flex items-center gap-1 bg-slate-900 text-white font-bold rounded-2xl hover:bg-blue-600 active:scale-[0.96] transition-all shadow-lg shadow-slate-200">
+                  <span className="md:flex hidden">
+                    Mulai 
+                  </span>
+                  Eksplorasi
+              </button>
             </a>
               <a href="/ppdb">
-                <button className="px-8 py-4 bg-white text-slate-700 font-bold rounded-2xl border border-slate-400 hover:border-blue-400 transition-all">
-                    Pendaftaran Siswa
+                <button className="w-full md:w-max md:px-4 px-8 py-4 flex items-center gap-1 bg-white text-slate-700 font-bold rounded-2xl border border-slate-400 active:scale-[0.96] hover:brightness-95 hover:border-blue-400 transition-all">
+                    Pendaftaran 
+                    <span className="md:flex hidden">
+                      Siswa
+                    </span>
                 </button>
               </a>
             </div>
@@ -71,12 +103,12 @@ export const HeroComp101 = ({ id, titleProps, subTitleProps }: HeroProps) => {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="relative w-[40%]"
+            className="relative w-full md:w-[40%]"
           >
             {/* Main Image Card */}
-            <div className="relative z-[4] rounded-[2.5rem] overflow-hidden border-[12px] border-white shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+            <div className="relative z-[4] rounded-md md:rounded-[2.5rem] overflow-hidden border-[12px] border-white shadow-2xl nd:mt-0 mt-8 md:rotate-2 hover:rotate-0 transition-transform duration-500">
               <img 
-                src="/hero2.png" 
+                src={profile?.heroImageUrl || '/hero2.png'} 
                 alt="Student" 
                 className="w-full h-[400px] object-cover"
               />

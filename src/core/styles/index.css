@@ -8,10 +8,10 @@
   font-weight: 100;
   font-style: normal;
 }
-/* 
+
 ::-webkit-scrollbar {
   display: none;
-} */
+}
 
 .org-tree-container {
   display: flex;

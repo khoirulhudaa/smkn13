@@ -99,7 +99,7 @@ const GalleryBento = () => {
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl font-[900] text-slate-900 leading-tight"
+              className="text-3xl md:text-5xl font-[900] text-slate-900 leading-tight"
             >
               Momen <span className="text-blue-600 underline decoration-blue-200 underline-offset-8">Terbaik</span> Kami
             </motion.h2>

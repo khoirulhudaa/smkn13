@@ -248,7 +248,7 @@ const VotingOsisPage = () => {
         )
       }
 
-      <main className="flex-grow pt-2 pb-4 px-4">
+      <main className="flex-grow pt-2 pb-14 px-4">
         <div className="max-w-8xl md:px-4 mx-auto">
           
           {/* STEP 1: AUTHENTICATION */}
@@ -259,7 +259,7 @@ const VotingOsisPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="max-w-md mx-auto mt-10 px-4 py-10 md:px-8 md:py-8 rounded-3xl border border-black/10 shadow-xl bg-white text-center"
+                className="max-w-md mx-auto mt-10 px-4 py-10 md:px-8 md:py-8 rounded-3xl border border-blue-500/50 shadow-xl bg-white text-center"
               >
                 {/* Animated Icon Section */}
                 <div className="relative w-24 md:left-1.5 h-24 mx-auto mb-3">
@@ -309,38 +309,29 @@ const VotingOsisPage = () => {
                 className="space-y-10 pb-32 mt-8"
               >
                 {/* Candidates Grid */}
-                <div className={`grid ${candidates.length > 2 ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-8`}>
+                <div className="flex flex-wrap justify-center gap-8 mt-8">
                   {candidates.map((can, index) => (
                     <motion.div
                       key={can.id}
+                      className={`w-full sm:w-[calc(50%-2rem)] lg:w-[calc(25%-2rem)] max-w-[320px]relative group cursor-pointer rounded-[1rem] border-2 transition-all duration-500 overflow-hidden ${
+                      selectedCandidate === can.id 
+                        ? "border-blue-600 bg-white shadow-2xl shadow-blue-100" 
+                        : "border-gray-200 bg-white backdrop-blur-sm hover:border-blue-200 shadow-sm"
+                    }`}
                       whileHover={{ y: -8 }}
                       transition={{ duration: 0.3 }}
                       onClick={() => setSelectedCandidate(can.id)}
-                      className={`w-full relative group cursor-pointer rounded-[1rem] border-2 transition-all duration-500 overflow-hidden ${
-                        selectedCandidate === can.id 
-                          ? "border-blue-600 bg-white shadow-2xl shadow-blue-100" 
-                          : "border-gray-200 bg-white backdrop-blur-sm hover:border-blue-200 shadow-sm"
-                      }`}
                     >
-                      {/* Badge Nomor Urut */}
-                      <div className={`absolute top-6 left-6 w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-black transition-all ${
-                        selectedCandidate === can.id 
-                          ? "bg-blue-600 text-white scale-110 shadow-lg shadow-blue-200" 
-                          : "bg-gray-100 text-gray-400 group-hover:bg-blue-50 group-hover:text-blue-500"
-                      }`}>
-                        {index + 1}
-                      </div>
-
                       {/* Checkbox Status */}
-                      <div className="absolute top-6 right-6">
+                      <div className="absolute top-4 right-4">
                         <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
                           selectedCandidate === can.id ? "bg-blue-600 border-blue-600 scale-110" : "border-gray-200 bg-white"
                         }`}>
                           {selectedCandidate === can.id && <CheckCircle2 className="text-white w-5 h-5" />}
                         </div>
-                      </div>
-
-                      <div className="p-8 pt-4">
+                     </div>
+ 
+                      <div className="p-4 pt-4">
                         {/* Foto Kandidat - Overlapping Style */}
                         <div className="flex justify-center mb-8 h-32">
                           <div className="relative flex items-center">
@@ -367,36 +358,26 @@ const VotingOsisPage = () => {
                           <h3 className="text-xl font-black text-gray-900 leading-tight">
                             {can.chairmanName} <br/> & {can.viceChairmanName}
                           </h3>
-                          <p className="text-blue-600 font-bold text-xs uppercase tracking-widest">Paslon #{can.id}</p>
+                          <p className="text-blue-600 font-bold text-xs uppercase tracking-widest">Paslon #{index + 1}</p>
                         </div>
 
                         {/* Visi Misi Preview */}
-                        <div className={`p-5 rounded-[1rem] transition-colors duration-500 ${
+                        <div className={`p-0 rounded-[1rem] flex flex-col justify-between transition-colors duration-500 ${
                           selectedCandidate === can.id ? "bg-blue-50/50" : "bg-gray-50/80"
                         }`}>
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="h-[2px] w-5 bg-blue-600" />
-                            <p className="text-[14px] font-black text-blue-600 uppercase tracking-widest">Visi & Unggulan</p>
-                          </div>
-                          <p className="text-sm text-gray-600 italic mb-4 leading-relaxed line-clamp-2">"{can.vision}"</p>
-                          
-                          <ul className="space-y-2 mb-4">
-                            {can.mission?.slice(0, 2).map((m: string, i: number) => (
-                              <li key={i} className="flex items-center gap-2 text-[12px] text-gray-500">
-                                <div className="w-1 h-1 rounded-full bg-blue-400 shrink-0" />
-                                <span className="truncate">{m}</span>
-                              </li>
-                            ))}
-                          </ul>
-
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="h-[2px] w-5 bg-blue-600" />
+                          <p className="text-[14px] font-black text-blue-600 uppercase tracking-widest">Visi & Unggulan</p>
+                        </div>
+                        <p className="text-xs text-gray-600 italic mb-4 leading-relaxed line-clamp-2">"{can.vision}"</p>
                           <button 
                             onClick={(e) => {
                               e.stopPropagation();
                               setShowModal(can);
                             }}
-                            className="w-full py-3 bg-white border border-blue-200 text-blue-600 rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2 shadow-sm"
+                            className="w-full mt-auto py-3 bg-white border border-blue-200 text-blue-600 rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2 shadow-sm"
                           >
-                            <Info size={14} /> Lihat Misi Lengkap
+                            <Info size={14} /> Lihat Visi Misi Lengkap
                           </button>
                         </div>
                       </div>
@@ -479,7 +460,7 @@ const VotingOsisPage = () => {
                   <div className="w-full md:w-max mx-auto bg-white/30 backdrop-blur-md border border-white/10 p-3 rounded-[1rem] shadow-[0_20px_50px_rgba(0,0,0,0.4)] flex items-center justify-between gap-4">
                     <div className="pl-6 hidden md:flex items-center gap-4 mr-4">
                       <p className="text-black text-sm uppercase font-black tracking-widest">Kode Verifikasi</p>
-                      <p className="text-black font-mono text-sm font-bold">{voteCode}</p>
+                      <p className="text-black border border-black/30 rounded-md px-3 py-1 bg-white/60 backdrop-blur-xl font-mono text-sm font-bold">{voteCode}</p>
                     </div>
 
                     <div className="w-[1px] md:flex hidden h-[36px] mr-4 bg-black/40"></div>
@@ -531,7 +512,7 @@ const VotingOsisPage = () => {
                 {/* Background Glow Effect */}
                 <div className="absolute inset-0 bg-green-500/10 blur-[100px] rounded-full -z-10" />
 
-                <div className="bg-white/80 backdrop-blur-2xl border border-black/10 rounded-[1rem] p-10 text-center shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)]">
+                <div className="bg-white/80 backdrop-blur-2xl border border-blue-500/50 rounded-[1rem] p-10 text-center shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)]">
                   
                   {/* Animated Icon Section */}
                   <div className="relative w-24 h-24 mx-auto mb-8">

@@ -57,7 +57,7 @@ const BeritaComp = () => {
             >
               <Newspaper size={16} /> Insight & Updates
             </motion.div>
-            <h2 className="text-4xl md:text-5xl font-[900] text-slate-900 leading-none">
+            <h2 className="text-3xl md:text-5xl font-[900] text-slate-900 leading-none">
               Warta <span className="text-blue-600 underline direction-normal">Sekolah.</span>
             </h2>
           </div>

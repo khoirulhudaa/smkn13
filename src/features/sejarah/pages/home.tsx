@@ -211,7 +211,7 @@ const SejarahPage = () => {
       <ScrollProgress theme={theme} />
       <NavbarComp theme={theme} />
       
-      <HeroComp titleProps="Sejarah Sekolah" id="#sejarah" />
+      <HeroComp titleProps="Sejarah Sekolah Kami" id="#sejarah" />
       
       {/* Jika loading, bisa tampilkan skeleton atau biarkan saja karena HeroSection sudah muncul */}
       {!loading ? (

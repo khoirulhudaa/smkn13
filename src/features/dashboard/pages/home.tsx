@@ -4,13 +4,13 @@ import BeritaComp from "@/features/_global/components/berita";
 import { FooterComp } from "@/features/_global/components/footer";
 import GalleryComp from "@/features/_global/components/galeri";
 import { HeroComp } from "@/features/_global/components/hero";
-import { HeroComp78101 } from "@/features/_global/components/hero/hero78101";
 import NavbarComp from "@/features/_global/components/navbar";
+import { SambutanComp } from "@/features/_global/components/sambutan";
 import { getSchoolId } from "@/features/_global/hooks/getSchoolId";
 import { queryClient } from "@/features/_root/queryClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { Award, BookOpen, ChevronDown, FileCheck, HelpCircle, Instagram, Mail, MessageCircle, Play, School, Sparkles, SquareArrowOutUpRight, Thermometer, UserCheck, Users, UserX } from "lucide-react";
+import { ChevronDown, FileCheck, HelpCircle, Instagram, Mail, MessageCircle, Play, SquareArrowOutUpRight, Thermometer, UserCheck, UserX } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const BASE_URL = 'https://be-school.kiraproject.id/profileSekolah';
@@ -31,21 +31,6 @@ interface SchoolProfile {
   linkYoutube?: string;
 }
 
-let useSwipeable;
-try { useSwipeable = require("react-swipeable").useSwipeable; } catch { useSwipeable = () => ({}) }
-
-const SafeImage = ({ src, alt, className, style }: any) => {
-  const [failed, setFailed] = useState(false);
-  if (failed || !src) {
-    return (
-      <div className={className} aria-label={alt || 'image'}
-           style={{ ...style, background: "repeating-linear-gradient(45deg, #e2e8f0 0 10px, #cbd5e1 10px 20px)" }} />
-    );
-  }
-  return <img src={src} alt={alt || ''} className={className} style={style} loading="lazy" decoding="async"
-              referrerPolicy="no-referrer" crossOrigin="anonymous" onError={() => setFailed(true)} />;
-};
-
 // --- SHARED COMPONENTS & HELPERS ---
 const SectionHeader = ({ title, subtitle, light = false }: any) => (
   <div className="mb-16 text-center">
@@ -59,12 +44,12 @@ const SectionHeader = ({ title, subtitle, light = false }: any) => (
     <motion.h2 
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      className={`text-4xl md:text-5xl font-black mb-6 ${light ? 'text-white' : 'text-slate-900'}`}
+      className={`text-3xl md:text-5xl font-black mb-6 ${light ? 'text-white' : 'text-slate-900'}`}
     >
       {title}
     </motion.h2>
     <div className={`w-24 h-1.5 mx-auto rounded-full bg-blue-600 mb-6`} />
-    <p className={`max-w-2xl mx-auto text-lg ${light ? 'text-blue-100/70' : 'text-slate-600'}`}>{subtitle}</p>
+    <p className={`w-[96%] md:max-w-2xl mx-auto text-sm md:text-lg ${light ? 'text-blue-100/70' : 'text-slate-600'}`}>{subtitle}</p>
   </div>
 );
 
@@ -156,150 +141,6 @@ export function useNews(schoolId: string | number | undefined) {
   return { news, loading, error };
 }
 
-// ──────────────────────────────────────────────────────────────
-// SambutanSection - layout & style persis sama, hanya data dari profil
-// ──────────────────────────────────────────────────────────────
-const SambutanSection = () => {
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  const SCHOOL_ID = getSchoolId();
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch(`https://be-school.kiraproject.id/profileSekolah?schoolId=${SCHOOL_ID}`);
-        const result = await res.json();
-        if (result.success) setProfile(result.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
-
-  if (loading) return <div className="py-24 text-center text-blue-600 font-bold">Memuat pesan kepemimpinan...</div>;
-
-  const stats = [
-    { icon: <Users size={30} />, value: profile?.studentCount || '540+', label: 'Siswa' },
-    { icon: <BookOpen size={30} />, value: profile?.teacherCount || '45+', label: 'Guru' },
-    { icon: <School size={30} />, value: profile?.roomCount || '30+', label: 'Kelas' },
-    { icon: <Award size={30} />, value: profile?.achievementCount || '100', label: 'Prestasi' },
-  ];
-
-  return (
-   <section id="sambutan" className="relative pt-20 pb-6 md:pb-6 bg-white z-[2]">
-   
-      {/* Ornamen Background Halus */}
-      {/* 1. Grid Pattern & Gradient Top */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
-      <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: `url("https://www.transparenttextures.com/patterns/grid-me.png")` }} />
-    
-      <div className="max-w-7xl mx-auto px-6 relative z-[2]">
-        
-        {/* HEADER SECTION */}
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 mb-6"
-          >
-            <Sparkles size={14} fill="currentColor" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Pesan Kepemimpinan</span>
-          </motion.div>
-          
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-5xl font-[1000] text-slate-900 leading-tight tracking-tighter"
-          >
-            Mendidik Bangsa dengan <br />
-            <span className="text-blue-600 underline decoration-normal italic underline-offset-8">Hati & Inovasi</span>
-          </motion.h2>
-        </div>
-
-        {/* PROFILE CARD - CLEAN & MINIMALIST */}
-        <div className="flex flex-col items-center mb-24">
-          <motion.div
-            // initial={{ opacity: 0, y: 30 }}
-            // whileInView={{ opacity: 1, y: 0 }}
-            className="relative group"
-          >
-            {/* Soft Shadow Base */}
-            <div className="absolute inset-10 bg-blue-600/20 blur-[60px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            
-            {/* Image Container */}
-            <div className="relative w-[80%] h-[90%] mx-auto md:w-[440px] overflow-hidden p-6 border border-blue-900 rounded-[40px] md:h-[440px] bg-white">
-              <img 
-                src={profile?.photoHeadmasterUrl || '/kapalaSekolah.png'} 
-                alt="Kepala Sekolah" 
-                className="w-full h-full rounded-full object-cover transition-transform duration-1000" 
-              />
-            </div>
-
-            {/* Badge Nama - Glassmorphism */}
-            <motion.div 
-              // initial={{ opacity: 0, scale: 0.8 }}
-              // whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4 }}
-              className="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-xl border border-black/50 p-6 rounded-[2rem] shadow-xl text-center w-max"
-            >
-              <h3 className="text-xl font-[900] text-slate-900 mb-1 leading-none">
-                {profile?.headmasterName || 'Kepala Sekolah'}
-              </h3>
-              <p className="text-blue-600 text-[11px] font-black uppercase tracking-widest">
-                Kepala Sekolah
-              </p>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* NARRATIVE CONTENT */}
-        <div className="relative w-full md:w-[90%] mx-auto mb-12 mt-[-16px]">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-md w-full md:text-2xl z-[2] text-black/70 leading-[1.8] font-light text-center"
-          >
-            {profile?.headmasterWelcome?.split('\n').map((p: string, i: number) => (
-              <p key={i} className="mb-8">
-                "{p}"
-              </p>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* STATS SECTION - CLEAN BENTO STYLE */}
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6"
-        >
-          {stats.map((s: any, i: number) => (
-            <div 
-              key={i} 
-              className="group p-8 rounded-[3rem] flex flex-col items-center"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-blue-700 shadow-sm flex items-center justify-center text-white mb-6 transition-all duration-500">
-                {s.icon}
-              </div>
-              <p className="text-5xl font-[1000] text-slate-900 mb-1 tabular-nums">
-                {s.value}
-              </p>
-              <p className="text-[15px] font-normal text-slate-600 mt-4 uppercase tracking-widest">
-                {s.label}
-              </p>
-            </div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-};
-
 interface Facility {
   id: number;
   name: string;
@@ -386,9 +227,9 @@ const FasilitasSection = () => {
   if (facilities.length === 0) {
     return (
       <section className="py-8 md:py-20 bg-gradient-to-b from-indigo-100 via-purple-50 to-white">
-        <div className="max-w-7xl mx-auto md:px-0 px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold" style={{ color: "black" }}>
-            Fasilitas Sekolah Kami
+        <div className="max-w-7xl mx-auto md:px-0 px-6 md:text-center">
+          <h2 className="text-3xl md:text-5xl font-black" style={{ color: "black" }}>
+            Fasilitas <span className="text-blue-700 italic underline decoration-normal">Sekolah</span>
           </h2>
           <div className="w-full h-[200px] mt-12 rounded-lg border border-black/30 bg-gray-400/5 flex justify-center items-center">
             <p className="text-gray-500 mt-4">Belum ada data fasilitas yang tersedia saat ini.</p>
@@ -401,10 +242,42 @@ const FasilitasSection = () => {
   return (
     <section className="py-12 md:py-16 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
-        <SectionHeader 
-          title="Fasilitas Kampus" 
+        {/* <SectionHeader 
+          title="Fasilitas Sekolah" 
           subtitle="Lingkungan belajar yang didukung teknologi terkini untuk menunjang kreativitas siswa." 
-        />
+        /> */}
+
+        <div className="md:text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-xs font-bold tracking-widest uppercase mb-4"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+            </span>
+            Bangunan layak dan nyaman
+          </motion.div>
+          
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-3xl md:text-5xl font-black text-slate-900 mb-6"
+          >
+            Fasilitas <span className="text-blue-600 italic underline direction-normal  ">Sekolah</span>
+          </motion.h2>
+          
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-slate-500 max-w-2xl mx-auto text-lg font-light"
+          >
+            Lingkungan belajar yang didukung teknologi terkini untuk menunjang kreativitas siswa.
+          </motion.p>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[240px]">
           {facilities.map((item, i) => (
@@ -432,68 +305,65 @@ const FasilitasSection = () => {
     </section>
   )
 };
-
 const PengurusSection = () => {
   const [pengurus, setPengurus] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // School ID sesuaikan dengan ID sekolah di database-mu
   const SCHOOL_ID = getSchoolId(); 
   const API_URL = `https://be-school.kiraproject.id/guruTendik?schoolId=${SCHOOL_ID}`;
 
- useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await fetch(API_URL);
-      const result = await response.json();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(API_URL);
+        const result = await response.json();
 
-      if (result.success) {
-        const allData = result.data;
-
-        // 1. Definisikan Prioritas / Target Jabatan
-        const targetRoles = [
-          "Kepala Sekolah",
-          "Komite Sekolah",
-          "Wakil Kepala Sekolah",
-          // Prioritas terakhir: Cek TU atau Wakasek Kurikulum
-          ["Guru BK", "Kepala Tata Usaha", "Wakasek. Bidang Kurikulum", "Ka. Subag. Tata Usaha"]
+        // 1. Definisikan Struktur 4 Pilar Utama
+        const mainRoles = [
+          { key: "Kepala Sekolah", label: "Kepala Sekolah" },
+          { key: "Komite Sekolah", label: "Komite Sekolah" },
+          { key: "Wakil Kepala Sekolah", label: "Wakil Kepala Sekolah" },
+          { key: "Kepala Tata Usaha", label: "Kepala Tata Usaha" }
         ];
 
-        let filteredPengurus: any[] = [];
+        if (result.success) {
+          const allData = result.data;
 
-        targetRoles.forEach((roleTarget) => {
-          if (Array.isArray(roleTarget)) {
-            // Logika Fallback: Cari yang pertama kali ketemu dari list array
-            const foundFallback = allData.find((item: any) => 
-              roleTarget.includes(item.role)
-            );
-            if (foundFallback) filteredPengurus.push(foundFallback);
-          } else {
-            // Cari jabatan yang pas
-            const found = allData.find((item: any) => item.role === roleTarget);
-            if (found) filteredPengurus.push(found);
-          }
-        });
+          // 2. Map setiap pilar: Ambil dari API jika ada, jika tidak pakai data dummy
+          const mergedData = mainRoles.map((role) => {
+            const found = allData.find((item: any) => item.role === role.key);
+            
+            if (found) {
+              return {
+                jabatan: found.role,
+                nama: found.nama,
+                img: found.photoUrl || '/kapalaSekolah.png',
+                email: found.email,
+                isPlaceholder: false
+              };
+            } else {
+              // Data Dummy jika tidak ditemukan di API
+              return {
+                jabatan: role.label,
+                nama: "Nama Tenaga Pendidik",
+                img: null,
+                email: "#",
+                isPlaceholder: true
+              };
+            }
+          });
 
-        // 2. Mapping hasil filter ke state (Batasi maksimal 4)
-        const transformedData = filteredPengurus.slice(0, 4).map((item) => ({
-          jabatan: item.role,
-          nama: item.nama,
-          img: item.photoUrl || '/kapalaSekolah.png',
-          email: item.email
-        }));
-
-        setPengurus(transformedData);
+          setPengurus(mergedData);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data guru:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Gagal mengambil data guru:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchData();
-}, []);
+    fetchData();
+  }, []);
 
   if (loading) {
     return <div className="py-24 text-center">Memuat data pilar pendidikan...</div>;
@@ -501,10 +371,8 @@ const PengurusSection = () => {
 
   return (
     <section className="py-12 md:py-24 bg-slate-50 relative">
-      {/* Background Decor */}
-      {/* <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-slate-50 to-transparent" /> */}
-
       <div className="max-w-7xl mx-auto px-6 relative z-[4]">
+        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-6">
           <div className="max-w-2xl">
             <motion.span 
@@ -514,62 +382,60 @@ const PengurusSection = () => {
             >
               Leadership Team
             </motion.span>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mt-2">
-              Pilar <span className="text-blue-600 italic underline direction-normal">Pendidikan</span>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mt-2">
+              Pilar <span className="text-blue-600 italic underline">Pendidikan</span>
             </h2>
           </div>
-          <p className="text-slate-500 max-w-sm font-light leading-relaxed">
-            Dipimpin oleh tenaga pendidik profesional yang berdedikasi tinggi untuk kemajuan.
+          <p className="text-slate-600 max-w-sm font-light leading-relaxed">
+            Kepala Sekolah, Komite Sekolah, Wakil Kepala Sekolah, Kepala Tata Usaha
           </p>
         </div>
 
+        {/* Grid Section */}
         <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 z-[4]">
-          {pengurus.length > 0 ? (
-            pengurus.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                // whileHover={{ y: -12 }}
-                className="group z-[4]"
+          {pengurus.map((item: any, i: number) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`group z-[4] ${item.isPlaceholder ? 'opacity-60' : ''}`}
+            >
+              <div className={`relative z-[4] rounded-[2rem] overflow-hidden mb-6 aspect-[3/4] shadow-lg transition-all duration-500 
+                ${item.isPlaceholder 
+                  ? 'bg-slate-200 border-2 border-dashed border-slate-300 flex items-center justify-center grayscale' 
+                  : 'bg-slate-100 shadow-blue-900/5'}`}
               >
-                <div className="relative z-[4] rounded-[2rem] overflow-hidden bg-slate-100 mb-6 aspect-[3/4] shadow-lg shadow-blue-900/5">
-                  <img 
-                    src={item.img} 
-                    alt={item.nama} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                  />
-                  
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  {/* Link Email */}
-                  <div className="absolute bottom-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-                    <a 
-                      href={`mailto:${item.email}`}
-                      className="w-10 h-10 p-2 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 cursor-pointer hover:bg-blue-600 transition-colors"
-                    >
-                      <Mail size={20} />
-                    </a>
-                  </div>
-                </div>
+                {item.isPlaceholder ? (
+                  <span className="text-slate-500 font-medium px-4 text-center">{item.jabatan}</span>
+                ) : (
+                  <>
+                    <img 
+                      src={item.img} 
+                      alt={item.nama} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute bottom-6 right-6 flex flex-col gap-3 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
+                      <a href={`mailto:${item.email}`} className="w-10 h-10 p-2 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white border border-white/30 hover:bg-blue-600 transition-colors">
+                        <Mail size={20} />
+                      </a>
+                    </div>
+                  </>
+                )}
+              </div>
 
-                <div className="space-y-1 text-center md:text-left px-2">
-                  <p className="text-blue-600 font-bold text-xs uppercase tracking-widest">
-                    {item.jabatan}
-                  </p>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-700 transition-colors">
-                    {item.nama}
-                  </h3>
-                  <div className="w-8 h-1 bg-slate-200 group-hover:w-16 group-hover:bg-blue-600 transition-all duration-500 rounded-full mt-2" />
-                </div>
-              </motion.div>
-            ))
-          ) : (
-            <div className="col-span-full text-center text-slate-400 py-10">
-              Belum ada data pengurus yang tersedia.
-            </div>
-          )}
+              <div className="space-y-1 text-center md:text-left px-2">
+                <p className="text-blue-600 font-bold text-xs uppercase tracking-widest">
+                  {item.jabatan}
+                </p>
+                <h3 className={`text-lg font-bold transition-colors ${item.isPlaceholder ? 'text-slate-500 font-medium' : 'text-slate-900 group-hover:text-blue-700'}`}>
+                  {item.nama}
+                </h3>
+                <div className={`h-1 transition-all duration-500 rounded-full mt-2 ${item.isPlaceholder ? 'w-4 bg-slate-200' : 'w-8 bg-slate-200 group-hover:w-16 group-hover:bg-blue-600'}`} />
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
@@ -611,7 +477,7 @@ const VideoSection = () => {
   return (
     <section className="py-12 md:py-20 bg-slate-50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-[2]">
-        <div className="text-center mb-16">
+        <div className="md:text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -628,9 +494,9 @@ const VideoSection = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-black text-slate-900 mb-6"
+            className="text-3xl md:text-5xl font-black text-slate-900 mb-6"
           >
-            Jelajahi <span className="text-blue-600 italic underline direction-normal  ">Kehidupan</span> Sekolah
+            Tentang <span className="text-blue-600 italic underline direction-normal  ">Kami</span>
           </motion.h2>
           
           <motion.p
@@ -723,15 +589,15 @@ const InstagramFeedSection = ({ theme }: any) => {
 
       <div className="max-w-7xl mx-auto px-6">
         {/* Modern Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-6 text-center md:text-left">
+        <div className="flex flex-col md:flex-row items-start justify-between mb-16 gap-6 text-left">
           <div>
             <motion.div 
               initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-              className="flex items-center justify-center md:justify-start gap-2 text-blue-600 font-black tracking-widest text-xs uppercase mb-3"
+              className="flex items-center md:justify-start gap-2 text-blue-600 font-black tracking-widest text-xs uppercase mb-3"
             >
               <Instagram size={18} strokeWidth={3} /> Social Connect
             </motion.div>
-            <h2 className="text-4xl md:text-5xl font-[900] text-slate-900 leading-none">
+            <h2 className="text-3xl md:text-5xl font-[900] text-slate-900 leading-none">
               Instagram <span className="text-blue-600  italic underline direction-normal">Feed</span>
             </h2>
           </div>
@@ -959,61 +825,107 @@ const CommentSection = () => {
   };
 
   return (
-    <section className="py-24 bg-[#0f172a] relative overflow-hidden z-[4]">
-      {/* Decorative Blur */}
-      <div className="absolute top-0 right-[-14%] w-[800px] h-[800px] bg-blue-700 opacity-80 rounded-full blur-[120px]" />
+   <section className="relative overflow-hidden bg-[#0f172a] py-16 md:py-24">
+      {/* Decorative Blur - Disesuaikan ukurannya agar tidak 'bocor' di mobile */}
+      <div className="absolute -right-20 -top-20 z-0 h-[300px] w-[300px] rounded-full bg-blue-700 opacity-40 blur-[80px] md:h-[800px] md:w-[800px] md:opacity-60 md:blur-[120px]" />
       
-      <div className="max-w-7xl mx-auto px-6 relative z-[2]">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
         <SectionHeader 
           light 
           title="Suara Akademik" 
           subtitle="Apa kata mereka tentang pengalaman belajar di sekolah kami?" 
         />
 
-        <div className="bg-white/5 backdrop-blur-xl border border-white/30 p-8 md:p-12 rounded-[3rem] shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-blue-300 ml-1 tracking-widest uppercase">Nama Lengkap</label>
+        {/* Container Form dengan Adaptive Padding & Radius */}
+        <div className="mx-auto max-w-7xl rounded-[2rem] border border-white/20 bg-white/5 p-6 backdrop-blur-xl shadow-2xl md:rounded-[3rem] md:p-12">
+          <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+            
+            {/* Input Nama & Email */}
+            <div className="grid gap-6 md:grid-cols-2 md:gap-8">
+              <div className="space-y-3">
+                <label className="ml-1 block text-xs font-bold uppercase tracking-[0.2em] text-blue-300 md:text-sm">
+                  Nama Lengkap
+                </label>
                 <input 
-                  name="name" value={form.name} onChange={handleChange} required
-                  className="w-full bg-white/5 border border-white/30 rounded-2xl px-6 py-4 text-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" 
+                  name="name" 
+                  value={form.name} 
+                  onChange={handleChange} 
+                  required
+                  className="w-full rounded-2xl border border-white/20 bg-white/5 px-5 py-4 text-white outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 md:px-6" 
                   placeholder="Contoh: Budi Santoso"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-blue-300 ml-1 tracking-widest uppercase">Email</label>
+
+              <div className="space-y-3">
+                <label className="ml-1 block text-xs font-bold uppercase tracking-[0.2em] text-blue-300 md:text-sm">
+                  Email
+                </label>
                 <input 
-                  type="email" name="email" value={form.email} onChange={handleChange}
-                  className="w-full bg-white/5 border border-white/30 rounded-2xl px-6 py-4 text-white focus:ring-2 focus:ring-blue-500 transition-all outline-none" 
+                  type="email" 
+                  name="email" 
+                  value={form.email} 
+                  onChange={handleChange}
+                  className="w-full rounded-2xl border border-white/20 bg-white/5 px-5 py-4 text-white outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 md:px-6" 
                   placeholder="budi@email.com"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-blue-300 ml-1 tracking-widest uppercase">Rating Anda</label>
-              <div className="flex gap-2 bg-white/5 w-max p-3 rounded-2xl border border-white/30">
-                {[1,2,3,4,5].map((star) => (
-                  <button key={star} type="button" onClick={() => handleRatingChange(star)} className={`text-3xl transition-all ${star <= form.rating ? 'text-yellow-400 scale-110' : 'text-white/20'}`}>★</button>
+            {/* Rating Selector - Dibuat lebih touch-friendly di mobile */}
+            <div className="space-y-3">
+              <label className="ml-1 block text-xs font-bold uppercase tracking-[0.2em] text-blue-300 md:text-sm">
+                Rating Anda
+              </label>
+              <div className="flex w-max gap-2 rounded-2xl border border-white/20 bg-white/5 p-2 md:p-3">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button 
+                    key={star} 
+                    type="button" 
+                    onClick={() => handleRatingChange(star)} 
+                    className={`text-2xl transition-all duration-300 hover:scale-125 md:text-3xl ${
+                      star <= form.rating ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]' : 'text-white/20'
+                    }`}
+                  >
+                    ★
+                  </button>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-blue-300 ml-1 tracking-widest uppercase">Pesan & Kesan</label>
+            {/* Textarea */}
+            <div className="space-y-3">
+              <label className="ml-1 block text-xs font-bold uppercase tracking-[0.2em] text-blue-300 md:text-sm">
+                Pesan & Kesan
+              </label>
               <textarea 
-                name="comment" value={form.comment} onChange={handleChange} required rows={4}
-                className="w-full bg-white/5 border border-white/30 rounded-2xl px-6 py-4 text-white focus:ring-2 focus:ring-blue-500 transition-all outline-none"
+                name="comment" 
+                value={form.comment} 
+                onChange={handleChange} 
+                required 
+                rows={4}
+                className="w-full rounded-2xl border border-white/20 bg-white/5 px-5 py-4 text-white outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 md:px-6"
                 placeholder="Tuliskan ulasan Anda..."
               />
             </div>
 
+            {/* Submit Button - Animasi Hover & Loading State */}
             <button 
               disabled={isSubmitting}
-              className="w-full py-5 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-lg transition-all shadow-xl shadow-blue-900/20 disabled:bg-slate-700"
+              className="group relative w-full overflow-hidden rounded-2xl bg-blue-600 py-4 text-base font-black tracking-widest text-white transition-all hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(37,99,235,0.4)] disabled:bg-slate-700 md:py-5 md:text-lg"
             >
-              {isSubmitting ? 'MENGIRIM...' : 'KIRIM ULASAN SEKARANG'}
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                {isSubmitting ? (
+                  <>
+                    <svg className="h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    MENGIRIM...
+                  </>
+                ) : (
+                  'KIRIM ULASAN SEKARANG'
+                )}
+              </span>
             </button>
           </form>
         </div>
@@ -1221,7 +1133,7 @@ const FAQSection = () => {
                 <span className="text-blue-600 underline ml-2 direction-normal">Populer</span>
               </h2>
               <p className="text-slate-500 text-lg font-light mb-10 w-full md:w-[80%]">
-                Butuh bantuan cepat? Temukan jawaban dari berbagai pertanyaan umum seputar SMAN 25 Jakarta di sini.
+                Butuh bantuan cepat? Temukan jawaban dari berbagai pertanyaan umum seputar Sekolah kami.
               </p>
               
               <div className="w-full p-8 rounded-[2rem] bg-slate-900 text-white flex text-left items-center gap-6 shadow-2xl shadow-blue-900/20">
@@ -1231,9 +1143,11 @@ const FAQSection = () => {
                 <div>
                   <h4 className="font-bold text-lg mb-1">Masih bingung?</h4>
                   <p className="text-slate-400 text-sm mb-4">Tim administrasi kami siap membantu Anda secara langsung.</p>
-                  <button className="text-blue-400 font-black text-sm uppercase tracking-tighter hover:text-white transition-colors">
-                    Hubungi Kontak Kami →
-                  </button>
+                  <a href="/layanan">
+                    <button className="text-blue-400 font-black text-sm uppercase tracking-tighter hover:text-white transition-colors">
+                      Hubungi Kontak Kami →
+                    </button>
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -1307,30 +1221,12 @@ const FAQSection = () => {
 };
 
 // Page utama
-const Page = ({ theme, onTenantChange, currentKey, schoolID }: any) => (
+const Page = ({ theme, onTenantChange, currentKey }: any) => (
   <div className="min-h-screen bg-white">
-    {/* <motion.div 
-      animate={{ 
-        x: [0, 50, 0], 
-        y: [0, 30, 0],
-        scale: [1, 1.2, 1] 
-      }}
-      transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-      className="fixed z-[3] -top-20 -left-20 w-[30%] h-[40%] bg-blue-800 rounded-full blur-[160px]" 
-    />
-    <motion.div 
-      animate={{ 
-        x: [0, 50, 0], 
-        y: [0, 30, 0],
-        scale: [1, 1.2, 1] 
-      }}
-      transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-      className="fixed z-[3] bottom-0 -right-20 w-[30%] h-[40%] bg-blue-800 rounded-full blur-[160px]" 
-    /> */}
     <NavbarComp theme={theme} onTenantChange={onTenantChange} currentKey={currentKey} />
     <HeroComp id="#sambutan" />
     {/* <StatsBar theme={theme} /> */}
-    <SambutanSection />
+    <SambutanComp />
     <FasilitasSection />
     <VideoSection />
     <PengurusSection />
@@ -1354,7 +1250,7 @@ const Homepage = () => {
     queryClient.invalidateQueries();
   }, [key]);
 
-  return <Page theme={theme} onTenantChange={setKey} currentKey={key} schoolID={schoolID} />;
+  return <Page theme={theme} onTenantChange={setKey} currentKey={key} />;
 };
 
 export default Homepage;
