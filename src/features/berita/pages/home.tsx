@@ -4,6 +4,7 @@ import { HeroComp } from "@/features/_global/components/hero";
 import NavbarComp from "@/features/_global/components/navbar";
 import { getSchoolId } from "@/features/_global/hooks/getSchoolId";
 import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 
@@ -209,7 +210,7 @@ function BeritaSection({ theme }: { theme: any; }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10"
+              className="fixed inset-0 z-[99999999999999999] flex items-center justify-center p-4 md:p-10"
               onClick={() => setSelected(null)}
             >
               <div className="absolute inset-0 bg-gray-900/90 backdrop-blur-xl" />
@@ -217,11 +218,11 @@ function BeritaSection({ theme }: { theme: any; }) {
                 initial={{ scale: 0.9, opacity: 0, y: 30 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                className="relative w-full max-w-5xl bg-white rounded-[2rem] overflow-hidden shadow-2xl max-h-full flex flex-col"
+                className="relative w-full z-[999999999] max-w-5xl bg-white rounded-[2rem] overflow-hidden shadow-2xl max-h-full flex flex-col"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="overflow-y-auto">
-                  <div className="relative h-[40vh] md:h-[50vh]">
+                <div className="sticky h-[90vh] z-[9999999]">
+                  <div className="relative h-[32%]">
                     <img src={selected.imageUrl} className="w-full h-full object-cover" />
                     <button 
                       onClick={() => setSelected(null)}
@@ -231,7 +232,7 @@ function BeritaSection({ theme }: { theme: any; }) {
                     </button>
                   </div>
                   
-                  <div className="p-10 md:p-6">
+                  <div className="p-10 h-[68%] md:p-6 overflow-y-auto">
                     <div className="flex items-center w-full justify-between gap-4 mb-8">
                        <CardBadge>{selected.category}</CardBadge>
                        <span className="text-xs font-black text-gray-600 uppercase tracking-widest">{selected.date}</span>
@@ -241,7 +242,7 @@ function BeritaSection({ theme }: { theme: any; }) {
                       {selected.title}
                     </h2>
 
-                    <div className="prose prose-lg max-w-none text-gray-600 font-medium leading-relaxed whitespace-pre-wrap">
+                    <div className="prose prose-lg w-[100%] text-gray-600 font-medium pb-6 leading-relaxed ">
                       {selected.desc}
                     </div>
                   </div>
@@ -264,7 +265,7 @@ const BeritaPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <NavbarComp theme={theme} />
+      <NavbarComp />
       <HeroComp titleProps="Berita Untuk-mu" id="#berita" />
       <main className="flex-1 relative z-[1]" id="berita">
         <BeritaSection theme={theme} />

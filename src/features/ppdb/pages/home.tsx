@@ -10,13 +10,13 @@ import {
   Mail,
   MapPinned // Icon baru untuk Jalur
   ,
+
   Phone,
-  ShieldCheck,
-  Users
+  ShieldCheck
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const BASE_URL = "http://localhost:5005/ppdb";
+const BASE_URL = "https://be-school.kiraproject.id/ppdb";
 const SCHOOL_ID = getSchoolId();
 
 // ──────────────────────────────────────────────────────────────
@@ -77,6 +77,7 @@ export default function PPDBPage() {
           setConfig(null);
         }
       } catch (err: any) {
+        console.log('err', err.message)
         setError(err.message || "Gagal memuat informasi PPDB");
       } finally {
         setLoading(false);

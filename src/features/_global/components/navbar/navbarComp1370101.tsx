@@ -341,7 +341,7 @@ export const NavbarComp1378101 = ({ theme = {}, onTenantChange = () => {}, curre
   }, [themeKey, currentKey, onTenantChange]);
 
   return (
-    <div className="sticky top-0 left-0 w-full z-[999]">
+    <div className="relative top-0 left-0 w-full z-[9999]">
       {/* Top Header - Sekarang dinamis dari Profile Sekolah */}
       <header className="w-full text-[10px] md:text-xs px-4 md:px-16 uppercase font-medium bg-blue-700 text-white hidden md:flex items-center justify-center p-3">
         {isPending ? (

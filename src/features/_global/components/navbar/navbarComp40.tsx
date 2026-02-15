@@ -128,7 +128,7 @@ export const NavbarComp40 = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full z-[999] transition-all duration-500">
+    <div className="fixed top-0 left-0 w-full z-[6] transition-all duration-500">
       
       {/* 1. TOP INFO BAR (Extra Minimalist) */}
       <div className={`hidden md:flex bg-blue-700 text-white py-5 h-[40px] px-12 transition-all duration-500 ${scrolled ? 'translate-y-[-100%] opacity-0' : 'translate-y-0 opacity-100'}`}>

@@ -10,7 +10,7 @@ import { getSchoolId } from "@/features/_global/hooks/getSchoolId";
 import { queryClient } from "@/features/_root/queryClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, FileCheck, HelpCircle, Instagram, Mail, MessageCircle, Play, SquareArrowOutUpRight, Thermometer, UserCheck, UserX } from "lucide-react";
+import { Building2, ChevronDown, FileCheck, Handshake, HelpCircle, Instagram, Mail, MessageCircle, Play, SquareArrowOutUpRight, Thermometer, UserCheck, UserX } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const BASE_URL = 'https://be-school.kiraproject.id/profileSekolah';
@@ -391,7 +391,6 @@ const PengurusSection = () => {
           </p>
         </div>
 
-        {/* Grid Section */}
         <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 z-[4]">
           {pengurus.map((item: any, i: number) => (
             <motion.div
@@ -399,16 +398,26 @@ const PengurusSection = () => {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className={`group z-[4] ${item.isPlaceholder ? 'opacity-60' : ''}`}
+              className={`group z-[4] ${item.isPlaceholder ? 'opacity-80' : ''}`}
             >
+              {/* Container Card */}
               <div className={`relative z-[4] rounded-[2rem] overflow-hidden mb-6 aspect-[3/4] shadow-lg transition-all duration-500 
                 ${item.isPlaceholder 
-                  ? 'bg-slate-200 border-2 border-dashed border-slate-300 flex items-center justify-center grayscale' 
+                  ? 'bg-slate-200 border-2 border-dashed border-slate-300 flex items-center justify-center grayscale animate-shimmer' 
                   : 'bg-slate-100 shadow-blue-900/5'}`}
               >
                 {item.isPlaceholder ? (
-                  <span className="text-slate-500 font-medium px-4 text-center">{item.jabatan}</span>
+                  // Konten Placeholder
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-slate-300/50 flex items-center justify-center">
+                        <span className="text-slate-400">?</span>
+                    </div>
+                    <span className="text-slate-500 font-medium px-4 text-center text-md">
+                      {item.jabatan}
+                    </span>
+                  </div>
                 ) : (
+                  // Konten Asli
                   <>
                     <img 
                       src={item.img} 
@@ -425,6 +434,7 @@ const PengurusSection = () => {
                 )}
               </div>
 
+              {/* Info Teks */}
               <div className="space-y-1 text-center md:text-left px-2">
                 <p className="text-blue-600 font-bold text-xs uppercase tracking-widest">
                   {item.jabatan}
@@ -432,11 +442,12 @@ const PengurusSection = () => {
                 <h3 className={`text-lg font-bold transition-colors ${item.isPlaceholder ? 'text-slate-500 font-medium' : 'text-slate-900 group-hover:text-blue-700'}`}>
                   {item.nama}
                 </h3>
-                <div className={`h-1 transition-all duration-500 rounded-full mt-2 ${item.isPlaceholder ? 'w-4 bg-slate-200' : 'w-8 bg-slate-200 group-hover:w-16 group-hover:bg-blue-600'}`} />
+                <div className={`h-1 transition-all duration-500 rounded-full mt-2 ${item.isPlaceholder ? 'w-12 bg-slate-200' : 'w-8 bg-slate-200 group-hover:w-16 group-hover:bg-blue-600'}`} />
               </div>
             </motion.div>
           ))}
         </div>
+
       </div>
     </section>
   );
@@ -783,6 +794,16 @@ const CommentSection = () => {
 
   const { data: comments = [], isPending, error } = useComments(schoolId);
   const { mutate, isSubmitting } = useComments(schoolId);
+  const [showStats, setShowStats] = useState(true);
+
+  useEffect(() => {
+    // Fetch setting dari backend
+    fetch(`https://be-school.kiraproject.id/settings?schoolId=${schoolId}`)
+      .then(res => res.json())
+      .then(json => {
+        if(json.success) setShowStats(json.data.showRatingStats);
+      });
+  }, [schoolId])
 
   const [form, setForm] = useState({
     name: '',
@@ -942,13 +963,11 @@ interface Sponsor {
 
 const SponsorMarqueeSection = () => {
   const schoolId = getSchoolId();
-
   const [sponsors, setSponsors] = useState<Sponsor[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!schoolId) return;
-
     const fetchSponsors = async () => {
       try {
         setLoading(true);
@@ -966,71 +985,102 @@ const SponsorMarqueeSection = () => {
         setLoading(false);
       }
     };
-
     fetchSponsors();
   }, [schoolId]);
 
-  // Duplikat data agar terlihat seamless infinite loop
   const duplicatedSponsors = [...sponsors, ...sponsors];
 
-  if (loading || sponsors.length === 0) {
-    return null; 
-  }
-
   return (
-    <section className="py-12 md:py-16 bg-gradient-to-r from-gray-50 to-white overflow-hidden">
-      <div className="max-w-7xl mx-auto md:px-0 px-4 px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800">
-          Mitra & Sponsor Kami
-        </h2>
+    <section className="py-12 mt-16 md:py-12 bg-white relative overflow-hidden">
+      {/* Background Decor (Mirip Feed) */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_bottom,_var(--tw-gradient-stops))] from-blue-50/50 via-transparent to-transparent -z-10" />
 
-        <div className="relative mt-16">
-          {/* Marquee container */}
-          <div
-            className="flex animate-marquee hover:pause-marquee whitespace-nowrap"
-            style={{
-              animation: "marquee 30s linear infinite",
-            }}
-          >
-            {duplicatedSponsors.map((sponsor, index) => (
-              <div
-                key={`${sponsor.id}-${index}`}
-                className="flex-shrink-0 mx-2 flex flex-col items-center justify-center"
-                style={{ minWidth: "200px" }}
-              >
-                {sponsor.imageUrl ? (
-                  <img
-                    src={sponsor.imageUrl}
-                    alt={sponsor.name}
-                    className="h-20 md:h-24 w-auto object-contain transition-all duration-300"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="h-16 md:h-20 w-32 bg-gray-200 rounded flex items-center justify-center text-gray-500 text-xs">
-                    Logo
-                  </div>
-                )}
-                {/* <p className="mt-3 text-sm text-gray-600 font-medium text-center">
-                  {sponsor.name}
-                </p> */}
-              </div>
-            ))}
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Modern Header (Konsisten dengan Feed) */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-6 text-left">
+          <div>
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2 text-blue-600 font-black tracking-widest text-xs uppercase mb-3"
+            >
+              <Handshake size={18} strokeWidth={3} /> Strategic Partners
+            </motion.div>
+            <h2 className="text-3xl md:text-5xl font-[900] text-slate-900 leading-none">
+              Mitra & <span className="text-blue-600 italic underline">Sponsor</span>
+            </h2>
+          </div>
+          <div className="hidden md:block">
+             <p className="text-slate-500 font-medium max-w-xs text-sm">
+               Bekerja sama dengan institusi terbaik untuk memajukan pendidikan.
+             </p>
           </div>
         </div>
+
+        {loading ? (
+          /* SKELETON STATE */
+          <div className="flex gap-4 overflow-hidden">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="min-w-[200px] h-24 bg-slate-200 animate-pulse rounded-2xl" />
+            ))}
+          </div>
+        ) : sponsors.length === 0 ? (
+          /* EMPTY STATE (Mirip Feed) */
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="bg-white border-2 border-dashed border-slate-200 rounded-[2rem] md:rounded-[3rem] p-12 md:p-20 text-center"
+          >
+            <div className="inline-flex p-4 rounded-full bg-slate-50 text-slate-400 mb-4">
+               <Building2 size={32} />
+            </div>
+            <p className="text-slate-400 font-bold italic">Belum ada mitra atau sponsor yang terdaftar.</p>
+          </motion.div>
+        ) : (
+          /* DATA PRESENT - MARQUEE */
+          <div className="relative group overflow-hidden">
+            <div
+              className="flex animate-marquee hover:pause-marquee whitespace-nowrap"
+              style={{ animation: "marquee 40s linear infinite" }}
+            >
+              {duplicatedSponsors.map((sponsor, index) => (
+                <div
+                  key={`${sponsor.id}-${index}`}
+                  className="flex-shrink-0 mx-4 md:mx-8 flex flex-col items-center justify-center group/item"
+                  style={{ minWidth: "180px" }}
+                >
+                  <div className="bg-white/50 backdrop-blur-sm p-6 rounded-3xl border border-transparent hover:border-blue-100 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-500">
+                    {sponsor.imageUrl ? (
+                      <img
+                        src={sponsor.imageUrl}
+                        alt={sponsor.name}
+                        className="h-16 md:h-20 w-auto object-contain transition-all duration-500"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="h-16 md:h-20 w-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 text-xs font-bold">
+                        {sponsor.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {/* Gradient Overlay untuk efek memudar di pinggir */}
+            {/* <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none" /> */}
+          </div>
+        )}
       </div>
 
-      {/* CSS Animasi */}
       <style jsx global>{`
         @keyframes marquee {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
         }
         .animate-marquee {
-          animation: marquee 30s linear infinite;
+          display: flex;
+          width: max-content;
         }
         .pause-marquee:hover {
           animation-play-state: paused;
