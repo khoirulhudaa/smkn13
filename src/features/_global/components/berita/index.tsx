@@ -158,16 +158,16 @@ const BeritaComp = () => {
           >
             <motion.div 
               initial={{ scale: 0.9, y: 50 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 50 }}
-              className="bg-white w-full max-w-5xl max-h-full rounded-[3rem] overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-blue-600/20"
+              className="bg-white w-full max-w-7xl h-[94vh] rounded-[1.2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl shadow-blue-600/20"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="md:w-2/5 h-64 md:h-auto overflow-hidden">
+              <div className="md:w-2/5 h-64 md:flex hidden md:h-auto overflow-hidden">
                 <img src={selected.imageUrl} className="w-full h-full object-cover" alt="Detail" />
               </div>
               <div className="md:w-3/5 p-8 md:p-16 overflow-y-auto">
                 <button 
                   onClick={() => setSelected(null)}
-                  className="absolute top-8 right-8 w-12 h-12 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 text-white transition-all"
+                  className="absolute top-8 right-10 md:right-16 w-12 h-12 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 text-white transition-all"
                 >
                   <X size={24} />
                 </button>
@@ -176,14 +176,21 @@ const BeritaComp = () => {
                    <span className="w-1.5 h-1.5 bg-slate-300 rounded-full" />
                    <span className="text-slate-400">{fmtDate(selected.publishDate)}</span>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 leading-tight">
-                  {selected.title}
+                <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-8 leading-tight">
+                  {selected.title} TERBAIK DI TAHUN 2026 SEPNJANG SEJARAH DI MEGARA KESATUAN REPUBLIK INDONESIA
                 </h2>
-                <div className="prose prose-blue prose-slate max-w-none text-slate-600 font-medium leading-relaxed">
-                  {selected.content}
+                <div className="prose prose-blue prose-slate w-full text-slate-600 font-medium leading-relaxed">
+                  {selected.content} 
+                  dsajdjashdakjshdajhdajdhajsh jhasjdhasjdhasjdahsjkdhasjdhasjhd ajhajshsjdhasjdhasjdhasjh jashdjashdjashdasjdhasjhdj hdakjshdaksjhdaskjdhaskjdh jdhasjdhasjdhasjdhajsdhasj hasjdhasjdhasjdhasjh kjashdjashdajshdajskhkajs hdaskjdhajkhdaskjhdaskjh kjashdjash
+                  dsajdjashdakjshdajhdajdhajsh jhasjdhasjdhasjdahsjkdhasjdhasjhd ajhajshsjdhasjdhasjdhasjh jashdjashdjashdasjdhasjhdj hdakjshdaksjhdaskjdhaskjdh jdhasjdhasjdhasjdhajsdhasj hasjdhasjdhasjdhasjh kjashdjashdajshdajskhkajs hdaskjdhajkhdaskjhdaskjh kjashdjash
+                  dsajdjashdakjshdajhdajdhajsh jhasjdhasjdhasjdahsjkdhasjdhasjhd ajhajshsjdhasjdhasjdhasjh jashdjashdjashdasjdhasjhdj hdakjshdaksjhdaskjdhaskjdh jdhasjdhasjdhasjdhajsdhasj hasjdhasjdhasjdhasjh kjashdjashdajshdajskhkajs hdaskjdhajkhdaskjhdaskjh kjashdjash
+                  dsajdjashdakjshdajhdajdhajsh jhasjdhasjdhasjdahsjkdhasjdhasjhd ajhajshsjdhasjdhasjdhasjh jashdjashdjashdasjdhasjhdj hdakjshdaksjhdaskjdhaskjdh jdhasjdhasjdhasjdhajsdhasj hasjdhasjdhasjdhasjh kjashdjashdajshdajskhkajs hdaskjdhajkhdaskjhdaskjh kjashdjash
+                  dsajdjashdakjshdajhdajdhajsh jhasjdhasjdhasjdahsjkdhasjdhasjhd ajhajshsjdhasjdhasjdhasjh jashdjashdjashdasjdhasjhdj hdakjshdaksjhdaskjdhaskjdh jdhasjdhasjdhasjdhajsdhasj hasjdhasjdhasjdhasjh kjashdjashdajshdajskhkajs hdaskjdhajkhdaskjhdaskjh kjashdjash
+                  dsajdjashdakjshdajhdajdhajsh jhasjdhasjdhasjdahsjkdhasjdhasjhd ajhajshsjdhasjdhasjdhasjh jashdjashdjashdasjdhasjhdj hdakjshdaksjhdaskjdhaskjdh jdhasjdhasjdhasjdhajsdhasj hasjdhasjdhasjdhasjh kjashdjashdajshdajskhkajs hdaskjdhajkhdaskjhdaskjh kjashdjash
+                  dsajdjashdakjshdajhdajdhajsh jhasjdhasjdhasjdahsjkdhasjdhasjhd ajhajshsjdhasjdhasjdhasjh jashdjashdjashdasjdhasjhdj hdakjshdaksjhdaskjdhaskjdh jdhasjdhasjdhasjdhajsdhasj hasjdhasjdhasjdhasjh kjashdjashdajshdajskhkajs hdaskjdhajkhdaskjhdaskjh kjashdjash
                 </div>
                 <div className="mt-12 pt-8 border-t border-slate-100 flex items-center gap-4 text-slate-400 italic">
-                  <User size={18} className="text-blue-600" /> Published by <span className="text-slate-900 font-bold not-italic">{selected.author || 'Editorial SMAN 25'}</span>
+                  <User size={18} className="text-blue-600" /> Published by <span className="text-slate-900 font-bold not-italic">{selected.author || 'Admin Sekolah'}</span>
                 </div>
               </div>
             </motion.div>

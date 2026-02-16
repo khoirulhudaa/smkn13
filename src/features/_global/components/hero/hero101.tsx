@@ -34,7 +34,7 @@ export const HeroComp101 = ({ id, titleProps, subTitleProps }: HeroProps) => {
   const { data: profile } = useSchoolProfile();
 
   return (
-    <section className="relative h-max md:pt-0 pt-10 md:h-[90vh] border-b border-slate-900/20 rounded-br-[120px] rounded-bl-[120px] flex items-center bg-blue-800/10 overflow-hidden ">
+    <section className="relative h-max md:mt-[0px] md:pt-0 pt-10 md:h-[90vh] border-b border-slate-900/20 rounded-br-[120px] rounded-bl-[120px] flex items-center bg-blue-800/10 overflow-hidden ">
       {/* Background Decorative Elements */}
       {/* <div className="absolute top-0 right-0 w-1/3 h-full bg-white -skew-x-12 transform origin-top" /> */}
       

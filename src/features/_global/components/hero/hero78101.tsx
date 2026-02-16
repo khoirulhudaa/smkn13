@@ -51,7 +51,7 @@ export const HeroComp78101 = ({ id, titleProps, subTitleProps }: HeroProps) => {
     "Jadilah bagian dari generasi berprestasi dengan fasilitas modern, pembelajaran inovatif, dan kegiatan ekstrakurikuler yang mendukung potensi terbaik Anda.";
 
   return (
-    <section id={id} className="relative h-[90vh] md:pt-0 pt-14 w-full overflow-hidden bg-[#01040a]">
+    <section id={id} className="relative h-[90vh] md:mt-[0px] md:pt-0 pt-14 w-full overflow-hidden bg-[#01040a]">
       {/* --- Background Logic --- */}
       <div className="absolute inset-0 z-0">
         <SafeImage 

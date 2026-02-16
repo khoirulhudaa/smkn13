@@ -1,5 +1,4 @@
 import { SMAN25_CONFIG } from "@/core/theme";
-import { getXHostHeader } from "@/core/utils/XHostHeader";
 import BeritaComp from "@/features/_global/components/berita";
 import { FooterComp } from "@/features/_global/components/footer";
 import GalleryComp from "@/features/_global/components/galeri";
@@ -9,9 +8,10 @@ import { SambutanComp } from "@/features/_global/components/sambutan";
 import { getSchoolId } from "@/features/_global/hooks/getSchoolId";
 import { queryClient } from "@/features/_root/queryClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
-import { Building2, ChevronDown, FileCheck, Handshake, HelpCircle, Instagram, Mail, MessageCircle, Play, SquareArrowOutUpRight, Thermometer, UserCheck, UserX } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Building2, ChevronDown, Handshake, HelpCircle, Instagram, Mail, MessageCircle, Play, SquareArrowOutUpRight, UserCheck, UserX } from "lucide-react";
+import { cloneElement, useEffect, useState } from "react";
 
 const BASE_URL = 'https://be-school.kiraproject.id/profileSekolah';
 const BASE_URL2 = 'https://be-school.kiraproject.id';
@@ -52,28 +52,6 @@ const SectionHeader = ({ title, subtitle, light = false }: any) => (
     <p className={`w-[96%] md:max-w-2xl mx-auto text-sm md:text-lg ${light ? 'text-blue-100/70' : 'text-slate-600'}`}>{subtitle}</p>
   </div>
 );
-
-const useStats = () => {
-  const xHost = getXHostHeader();
-  return useQuery({
-    queryKey: ['stats', xHost],
-    queryFn: async () => {
-      const res = await fetch("https://dev.kiraproject.id/public/statistics/daily", {
-        cache: 'no-store',
-        headers: { 'X-Host': xHost, 'Cache-Control': 'no-store' },
-      });
-      if (!res.ok) throw new Error("Failed to fetch statistics");
-      const data = await res.json();
-      if (!data.success) throw new Error("Invalid response");
-      return [
-        { k: "HADIR", v: data.data.hadirHariIni },
-        { k: "IZIN", v: data.data.izinSakit },
-        { k: "TERLAMBAT", v: data.data.terlambat },
-        { k: "GURU HADIR", v: data.data.guruHadir },
-      ];
-    },
-  });
-};
 
 export function useNews(schoolId: string | number | undefined) {
   const [news, setNews] = useState<any[]>([]);
@@ -305,6 +283,7 @@ const FasilitasSection = () => {
     </section>
   )
 };
+
 const PengurusSection = () => {
   const [pengurus, setPengurus] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -693,55 +672,104 @@ const ArrowRight = ({ className, size }: any) => (
   <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
 );
 
-// === STATS BAR ===
-const StatsBar = () => {
-  const { data: stats = [], isPending, error } = useStats();
+// --- FETCHING LOGIC ---
+const fetchStats = async (schoolId: string) => {
+  const { data } = await axios.get(`https://be-school.kiraproject.id/siswa/summary-attendances`, {
+    params: { schoolId }
+  });
+  
+  const { siswa, guru } = data.data;
+  console.log('data kehadiran', data.data)
+  console.log('data kehadiran siswa', data.data.siswa)
+  console.log('data kehadiran guru', data.data.guru)
 
-  // Daftar icon sesuai urutan stats (sesuaikan dengan data stats kamu)
-  const icons = [
-      <UserCheck className="w-12 h-12 md:w-12 md:h-12 p-3 rounded-md bg-green-600 text-white" />,     // Kehadiran
-      <UserX className="w-12 h-12 md:w-12 md:h-12 p-3 rounded-md bg-red-600 text-white" />,           // Alpha
-      <Thermometer className="w-12 h-12 md:w-12 md:h-12 p-3 rounded-md bg-orange-600 text-white" />,  // Sakit
-      <FileCheck className="w-12 h-12 md:w-12 md:h-12 p-3 rounded-md bg-blue-600 text-white" />,      // Izin
+  // Gabungkan data Siswa & Guru untuk tampilan Dashboard Utama
+  return [
+    { 
+      k: 'Siswa Hadir', 
+      v: siswa.rincian.Hadir 
+    },
+    { 
+      k: 'Siswa Alpha', 
+      // Alpha = Data Status Alpha + Siswa/Guru yang belum scan sama sekali
+      v: siswa.belumAbsen 
+    },
+    { 
+      k: 'Guru Hadir', 
+      v: guru.rincian.Hadir 
+    },
+    { 
+      k: 'Guru Alpha', 
+      v: guru.belumAbsen 
+    },
+  ];
+};
+
+const StatsBar = ({ schoolId }: { schoolId: string }) => {
+  const { data: stats, isPending, error } = useQuery({
+    queryKey: ['attendanceStats', schoolId],
+    queryFn: () => fetchStats(schoolId),
+    refetchInterval: 60000,
+  });
+
+  const config = [
+    { color: "from-emerald-500 to-teal-600", icon: <UserCheck />, label: "Hadir" },
+    { color: "from-rose-500 to-red-600", icon: <UserX />, label: "Alpa" },
+    { color: "from-amber-500 to-orange-600", icon: <UserCheck />, label: "Izin/Sakit" },
+    { color: "from-blue-500 to-indigo-600", icon: <UserX />, label: "Total Siswa" },
   ];
 
-  if (isPending) return <div className="py-6 text-center">Loading stats...</div>;
-  if (error) return <div className="py-6 text-red-400 text-center">Error: {error.message}</div>;
+  if (isPending) return (
+    <div className="max-w-7xl px-6 mx-auto py-10 grid grid-cols-1 md:grid-cols-4 gap-6">
+      {[1, 2, 3, 4].map((i) => (
+        <div key={i} className="h-32 bg-slate-100 animate-pulse rounded-3xl border border-slate-200" />
+      ))}
+    </div>
+  );
+
+  if (error) return <div className="py-10 text-center text-red-400 font-light">Gagal memuat statistik sistem.</div>;
 
   return (
-    <section id="stats" className="w-full md:w-7xl px-2 md:px-16 rounded-2xl mx-auto relative py-6 mt-[-60px] h-max">
-      <div className="w-full mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-6">
-          {stats.map((s: any, i: number) => (
-            <motion.div
-              key={s.k}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="rounded-2xl px-6 border shadow-lg h-[110px] bg-white pb-0 border-gray-300 flex flex-col items-start justify-center"
-            >
-              <div className="flex items-center gap-6 relative mt-1">
-                {/* Icon */}
-                <div className="text-black h-full w-[30%] opacity-80">
-                  {icons[i] || null} {/* fallback null jika urutan tidak cocok */}
-                </div>
-                <div className="flex flex-col h-max items-start gap-2 text-xl md:text-2xl font-bold" style={{ color: 'black' }}>
-                  {/* Label */}
-                  <div className="text-xs md:text-[16px] w-max opacity-80" style={{ color: 'black' }}>
-                    {s.k}
-                  </div>
-                  <div className="w-max flex items-center gap-2">
-                    {s.v} 
-                    <p className="text-sm font-normal text-gray-500">
-                      Orang
-                    </p>
-                  </div>
+    <section id="stats" className="w-full max-w-7xl mx-auto px-6 relative py-12">
+      {/* Background Decor */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-full bg-blue-50/50 blur-[120px] -z-10" />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats?.map((s, i) => (
+          <motion.div
+            key={s.k}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+            whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            className="group relative overflow-hidden rounded-[2.5rem] bg-white border border-blue-500 p-8 shadow-[0_20px_50px_rgba(0,0,0,0.05)]"
+          >
+            {/* Hover Gradient Overlay */}
+            <div className={`absolute inset-0 opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300 bg-gradient-to-br ${config[i].color}`} />
+            
+            <div className="relative flex flex-col items-start gap-5">
+              {/* Icon with Soft Shadow */}
+              <div className={`flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${config[i].color} text-white shadow-lg shadow-current/20`}>
+                {cloneElement(config[i].icon as React.ReactElement, { size: 28, strokeWidth: 2.5 })}
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-xs font-bold text-slate-600 uppercase tracking-[0.15em]">
+                  {s.k}
+                </p>
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-4xl font-black text-slate-900 tracking-tight">
+                    {s.v}
+                  </span>
+                  <span className="text-sm ml-1 font-semibold text-slate-400">
+                    Orang
+                  </span>
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
@@ -798,7 +826,7 @@ const CommentSection = () => {
 
   useEffect(() => {
     // Fetch setting dari backend
-    fetch(`https://be-school.kiraproject.id/settings?schoolId=${schoolId}`)
+    fetch(`https://be-school.kiraproject.id/rating/settings?schoolId=${schoolId}`)
       .then(res => res.json())
       .then(json => {
         if(json.success) setShowStats(json.data.showRatingStats);
@@ -1271,11 +1299,11 @@ const FAQSection = () => {
 };
 
 // Page utama
-const Page = ({ theme, onTenantChange, currentKey }: any) => (
+const Page = ({ theme, schoolId }: any) => (
   <div className="min-h-screen bg-white">
-    <NavbarComp theme={theme} onTenantChange={onTenantChange} currentKey={currentKey} />
+    <NavbarComp/>
     <HeroComp id="#sambutan" />
-    {/* <StatsBar theme={theme} /> */}
+    <StatsBar schoolId={schoolId} />
     <SambutanComp />
     <FasilitasSection />
     <VideoSection />
@@ -1300,7 +1328,7 @@ const Homepage = () => {
     queryClient.invalidateQueries();
   }, [key]);
 
-  return <Page theme={theme} onTenantChange={setKey} currentKey={key} />;
+  return <Page theme={theme} onTenantChange={setKey} currentKey={key} schoolId={schoolID} />;
 };
 
 export default Homepage;

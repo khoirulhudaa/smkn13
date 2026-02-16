@@ -218,11 +218,11 @@ function BeritaSection({ theme }: { theme: any; }) {
                 initial={{ scale: 0.9, opacity: 0, y: 30 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                className="relative w-full z-[999999999] max-w-5xl bg-white rounded-[2rem] overflow-hidden shadow-2xl max-h-full flex flex-col"
+                className="relative w-full z-[999999999] max-w-7xl h-[90vh] bg-white rounded-[2rem] overflow-hidden shadow-2xl max-h-full flex flex-col"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="sticky h-[90vh] z-[9999999]">
-                  <div className="relative h-[32%]">
+                  <div className="relative h-[32%] md:flex hidden">
                     <img src={selected.imageUrl} className="w-full h-full object-cover" />
                     <button 
                       onClick={() => setSelected(null)}
@@ -232,7 +232,7 @@ function BeritaSection({ theme }: { theme: any; }) {
                     </button>
                   </div>
                   
-                  <div className="p-10 h-[68%] md:p-6 overflow-y-auto">
+                  <div className="h-full md:h-[68%] p-6 overflow-y-auto">
                     <div className="flex items-center w-full justify-between gap-4 mb-8">
                        <CardBadge>{selected.category}</CardBadge>
                        <span className="text-xs font-black text-gray-600 uppercase tracking-widest">{selected.date}</span>

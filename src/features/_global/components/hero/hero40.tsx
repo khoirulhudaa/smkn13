@@ -76,7 +76,7 @@ export const HeroComp40 = ({ id, titleProps, subTitleProps }: any) => {
   };
 
   return (
-    <section className="relative h-[85vh] md:h-[110vh] w-full  bg-black flex items-center justify-center">
+    <section className="relative md:mt-[-100px] h-[85vh] md:h-[110vh] w-full bg-black flex items-center justify-center">
       
       {/* --- Fullscreen Video Wrapper --- */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -134,7 +134,7 @@ export const HeroComp40 = ({ id, titleProps, subTitleProps }: any) => {
           </motion.p>
 
           <div className="mt-12 flex flex-col md:flex-row gap-6 mx-auto w-full md:w-max justify-center items-center">
-            <a href={id} className="w-max justify-center sm:w-auto flex items-center gap-1 px-12 py-5 bg-blue-700 hover:bg-blue-600 text-white border-2 border-white/50 font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-[0_10px_40px_rgba(37,99,235,0.4)]">
+            <a href={id} className="w-full md:w-max justify-center sm:w-auto flex items-center gap-1 px-12 py-5 bg-blue-700 hover:bg-blue-600 text-white border-2 border-white/50 font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-[0_10px_40px_rgba(37,99,235,0.4)]">
               MULAI PENELUSURAN
             </a>
             <button
@@ -144,7 +144,7 @@ export const HeroComp40 = ({ id, titleProps, subTitleProps }: any) => {
             >
                 {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
             </button>
-            <a href="/ppdb" className="w-max justify-center flex sm:w-auto px-12 py-5 bg-transparent border-2 border-white/50 hover:border-white text-white font-bold rounded-2xl transition-all duration-300 backdrop-blur-md">
+            <a href="/ppdb" className="w-full md:w-max justify-center flex sm:w-auto px-12 py-5 bg-transparent border-2 border-white/50 hover:border-white text-white font-bold rounded-2xl transition-all duration-300 backdrop-blur-md">
               PENDAFTARAN SISWA
             </a>
           </div>

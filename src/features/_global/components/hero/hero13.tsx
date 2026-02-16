@@ -41,7 +41,7 @@ export const HeroComp13 = ({titleProps, subTitleProps, id}: {titleProps?: string
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#020617] py-20 z-[4]"
+      className="relative min-h-screen md:mt-[-10px] flex flex-col items-center justify-center overflow-hidden bg-[#020617] py-20 z-[4]"
     >
       <div>
         {/* 1. DYNAMIC BACKGROUND ENGINE */}
